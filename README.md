@@ -32,9 +32,7 @@ Provides methods `exec(cmd)` and `exec(cmd, baseDir)` on the project to execute 
 
 # Installation
 
-To use these plugins, simply drop the `buildSrc` file into the root of your project (right beside your `build.gradle`).  That's all it takes!
-
-Unfortunately, there's no plugin ecosystem or `svn externals` equivalent for git (if I'm wrong, please correct me!), so you're pretty much [SOL](http://www.urbandictionary.com/define.php?term=shit%20out%20of%20luck&defid=1646062) for sane maintenance.
+I need to add some useful installation instructions based on the new jar approach.
 
 # Author and Origin
 
