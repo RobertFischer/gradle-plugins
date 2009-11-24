@@ -1,0 +1,37 @@
+usePlugin('groovy')
+usePlugin('maven')
+
+buildscript {
+  repositories {
+    mavenCentral()
+  }
+  dependencies {
+    classpath 'org.apache.maven.wagon:wagon-ssh:1.0-beta-6'
+  }
+}
+
+repositories {
+  mavenCentral()
+}
+dependencies {
+  groovy 'org.codehaus.groovy:groovy:1.6.4'
+  compile fileTree(dir:'lib', includes:['*.jar'])
+}
+
+uploadArchives { 
+  repositories.mavenDeployer {
+    repository(url: "ssh://repo.smokejumperit.com/repo.smokejumperit.com/") {
+      authentication{
+        userName=System.properties['sjit.repo.user']
+        privateKey=new File(System.properties['sjit.repo.keyFile']).absolutePath
+        passpharse=System.properties['sjit.repo.passphrase']
+      }
+      pom {
+        groupId='com.smokejumperit'
+        artifactId='gradle-plugins'
+        version='0.1'
+      }
+    }
+  } 
+} 
+
