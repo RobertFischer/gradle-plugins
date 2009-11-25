@@ -12,10 +12,6 @@ Provides two methods on the `project` object to work with configuration classloa
 
 * `classFor(configName, className)`&mdash;Looks up the class for name `className` using the class loader for config `configName`.
 
-### Usage
-
-    usePlugin(ClassLoadersPlugin)
-
 ### Example
 
     task(foo) << {
@@ -27,10 +23,6 @@ Provides two methods on the `project` object to work with configuration classloa
 ### Description
 
 Provides methods `exec(cmd)` and `exec(cmd, baseDir)` on the project to execute shell commands.  If the command does not return 0, the build will fail.
-
-### Usage
-
-    usePlugin(ExecPlugin)
 
 ### Example
 
