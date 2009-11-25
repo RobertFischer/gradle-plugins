@@ -52,6 +52,8 @@ Add the following lines to your build script to add the jars to your buildscript
       }
     }
 
+See the `sample` directory of this project for a build script which does this.
+
 # Author and Origin
 
 These plugins were written by [Robert Fischer](http://smokejumperit.com/).  They are published at [GitHub:RobertFischer/gradle-plugins](http://github.com/RobertFischer/gradle-plugins).
