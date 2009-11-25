@@ -32,7 +32,19 @@ Provides methods `exec(cmd)` and `exec(cmd, baseDir)` on the project to execute 
 
 # Installation
 
-I need to add some useful installation instructions based on the new jar approach.
+Add the following lines to your build script to add the jars to your buildscript classpath and use the plugins:
+
+  usePlugin(com.smokejumperit.gradle.ClassLoadersPlugin)
+  usePlugin(com.smokejumperit.gradle.ExecPlugin)
+
+  buildscript {
+    repositories {
+      mavenRepo urls:'http://repo.smokejumperit.com'
+    }
+    dependencies {
+      classpath 'com.smokejumperit:gradle-plugins:0.1'
+    }
+  }
 
 # Author and Origin
 
@@ -40,4 +52,4 @@ These plugins were written by [Robert Fischer](http://smokejumperit.com/).  They
 
 # License
 
-All these plugins are licensed under the [Creative Commons — CC0 1.0 Universal](http://creativecommons.org/publicdomain/zero/1.0/) license, with no warranty (expressed or implied) for any purpose.
+All these plugins are licensed under the [Creative Commons — CC0 1.0 Universal](http://creativecommons.org/publicdomain/zero/1.0/) license with no warranty (expressed or implied) for any purpose.
