@@ -1,14 +1,8 @@
 usePlugin('groovy')
 usePlugin('maven')
 
-buildscript {
-  repositories {
-    mavenRepo urls: "file://${System.properties['user.home']}/.m2/repository/"
-    mavenCentral()
-  }
-  dependencies {
-    classpath 'org.apache.maven.wagon:wagon-ssh:1.0-beta-2'
-  }
+configurations {
+    deployerJars
 }
 
 repositories {
@@ -17,17 +11,20 @@ repositories {
 }
 dependencies {
   groovy 'org.codehaus.groovy:groovy:1.6.4'
+  deployerJars 'org.apache.maven.wagon:wagon-ssh:1.0-beta-2'
   compile fileTree(dir:'lib', includes:['*.jar'])
 }
 
 uploadArchives { 
   repositories.mavenDeployer {
-    repository(url: "scp://repo.smokejumperit.com/repo.smokejumperit.com/") {
-      authentication{
-        userName=System.properties['sjit.repo.user']
-        privateKey=new File(System.properties['sjit.repo.keyFile']).absolutePath
-        passpharse=System.properties['sjit.repo.passphrase']
-      }
+    def repoUser = System.properties['sjit.repo.user']
+    configuration = configurations.deployerJars
+    repository(url: "scp://repo.smokejumperit.com/home/$repoUser/repo.smokejumperit.com/") {
+      authentication(
+        userName: repoUser,
+        privateKey: new File(System.properties['sjit.repo.keyFile']).absolutePath, 
+        passphrase: System.properties['sjit.repo.passphrase']
+      )
       pom {
         groupId='com.smokejumperit'
         artifactId='gradle-plugins'
