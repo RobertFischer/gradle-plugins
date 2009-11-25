@@ -7,13 +7,17 @@ These are a variety of plugins that I wrote for [Gradle](http://gradle.org) and 
 ### Description
 
 Provides two methods on the `project` object to work with configuration classloaders:
+
 * `classLoaderFor(configName)`&mdash;Provides a `java.lang.ClassLoader` consisting of all of the classes for a configuration.
+
 * `classFor(configName, className)`&mdash;Looks up the class for name `className` using the class loader for config `configName`.
 
 ### Usage
+
     usePlugin(ClassLoadersPlugin)
 
 ### Example
+
     task(foo) << {
       project.classFor(bar, "my.app.Main").main()
     }
@@ -25,9 +29,11 @@ Provides two methods on the `project` object to work with configuration classloa
 Provides methods `exec(cmd)` and `exec(cmd, baseDir)` on the project to execute shell commands.  If the command does not return 0, the build will fail.
 
 ### Usage
+
     usePlugin(ExecPlugin)
 
 ### Example
+
     project.exec("ls -al", project.buildDir)
 
 # Installation
