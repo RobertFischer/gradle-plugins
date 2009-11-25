@@ -7,8 +7,8 @@ These are a variety of plugins that I wrote for [Gradle](http://gradle.org) and 
 ### Description
 
 Provides two methods on the `project` object to work with configuration classloaders:
-  * `classLoaderFor(configName)`&mdash;Provides a `java.lang.ClassLoader` consisting of all of the classes for a configuration.
-  * `classFor(configName, className)`&mdash;Looks up the class for name `className` using the class loader for config `configName`.
+* `classLoaderFor(configName)`&mdash;Provides a `java.lang.ClassLoader` consisting of all of the classes for a configuration.
+* `classFor(configName, className)`&mdash;Looks up the class for name `className` using the class loader for config `configName`.
 
 ### Usage
     usePlugin(ClassLoadersPlugin)
@@ -34,17 +34,17 @@ Provides methods `exec(cmd)` and `exec(cmd, baseDir)` on the project to execute 
 
 Add the following lines to your build script to add the jars to your buildscript classpath and use the plugins:
 
-  usePlugin(com.smokejumperit.gradle.ClassLoadersPlugin)
-  usePlugin(com.smokejumperit.gradle.ExecPlugin)
+    usePlugin(com.smokejumperit.gradle.ClassLoadersPlugin)
+    usePlugin(com.smokejumperit.gradle.ExecPlugin)
 
-  buildscript {
-    repositories {
-      mavenRepo urls:'http://repo.smokejumperit.com'
+    buildscript {
+      repositories {
+        mavenRepo urls:'http://repo.smokejumperit.com'
+      }
+      dependencies {
+        classpath 'com.smokejumperit:gradle-plugins:0.1'
+      }
     }
-    dependencies {
-      classpath 'com.smokejumperit:gradle-plugins:0.1'
-    }
-  }
 
 # Author and Origin
 
