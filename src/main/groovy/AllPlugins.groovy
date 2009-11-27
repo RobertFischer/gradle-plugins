@@ -10,6 +10,7 @@ class AllPlugins extends SjitPlugin {
   AllPlugins() {
     def classLoader = this.class.classLoader
 
+    logger.trace("Going to find the SJIT plugins list")
     def file = classLoader.getResourceAsStream('com/smokejumperit/gradle/sjit.plugins')
     if(!file) throw new Exception("Cannot find SmokejumperIT Plugins file")
     plugins = file.text.split()
@@ -17,7 +18,7 @@ class AllPlugins extends SjitPlugin {
   }
 
   void use(Project project, ProjectPluginsContainer projectPluginsHandler) { 
-    project.logger.debug("Going to load these plugins: $plugins")
+    logger.debug("Going to load these plugins: $plugins")
 
     def classLoader = this.class.classLoader
 
@@ -26,9 +27,9 @@ class AllPlugins extends SjitPlugin {
       def cls = Class.forName(name, true, classLoader)
       if(!cls) throw new Exception("Could not find class $cls")
 
-      project.logger.info("Delegating to using plugin $name for $project")
+      logger.info("Delegating to using plugin $name for $project")
       project.usePlugin(cls)
-      project.logger.debug("Successfully used plugin $name for $project")
+      logger.debug("Successfully used plugin $name for $project")
     }
     
   }
