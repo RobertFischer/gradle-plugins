@@ -3,7 +3,8 @@ package com.smokejumperit.gradle
 import org.gradle.api.*
 import org.gradle.api.plugins.*
 
-class ExecPlugin implements Plugin {
+class ExecPlugin extends SjitPlugin {
+
   void use(Project project, ProjectPluginsContainer projectPluginsHandler) { 
     project.metaClass.exec = { String cmd, String baseDir ->
       delegate.exec(cmd, new File(baseDir))

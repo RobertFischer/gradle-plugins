@@ -34,9 +34,26 @@ uploadArchives {
       pom {
         groupId='com.smokejumperit'
         artifactId='gradle-plugins'
-        version='0.1'
+        version='0.2'
       }
     }
   } 
 } 
 
+task notePlugins << {
+  def names = []
+  sourceSets.main.allGroovy.matching { 
+    include('**/*Plugin.groovy')
+    exclude('**/SjitPlugin.groovy')
+  }.visit {
+    names << it.file.name.replaceFirst(/\.groovy$/, '')
+  }
+
+  def resourceDir = (sourceSets.main.resources.srcDirs as List)[0]
+  if(!resourceDir) throw new Exception("No resource directory found!")
+  ['com', 'smokejumperit', 'gradle'].each { resourceDir = new File(resourceDir, it) }
+  resourceDir.mkdirs() // Does nothing if already exists: see API
+
+  new File(resourceDir, 'sjit.plugins').text = names.join("\n")
+}
+processResources.dependsOn(notePlugins)

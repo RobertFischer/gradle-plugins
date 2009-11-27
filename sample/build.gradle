@@ -1,15 +1,16 @@
-usePlugin(com.smokejumperit.gradle.ClassLoadersPlugin)
-usePlugin(com.smokejumperit.gradle.ExecPlugin)
+//usePlugin(com.smokejumperit.gradle.ClassLoadersPlugin)
+//usePlugin(com.smokejumperit.gradle.ExecPlugin)
+usePlugin(com.smokejumperit.gradle.AllPlugins)
 
 buildscript {
   repositories {
     mavenRepo urls:'http://repo.smokejumperit.com'
   }
   dependencies {
-    classpath 'com.smokejumperit:gradle-plugins:0.1'
+    classpath 'com.smokejumperit:gradle-plugins:0.2-SNAPSHOT'
   }
 }
 
 task check << {
-  println "Things seem to be working!"
+  logger.info("Things seem to be working!")
 }

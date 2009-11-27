@@ -32,6 +32,7 @@ Provides methods `exec(cmd)` and `exec(cmd, baseDir)` on the project to execute 
 
 Add the following lines to your build script to add the jars to your buildscript classpath and use the plugins:
 
+    // Example of using two plugins
     usePlugin(com.smokejumperit.gradle.ClassLoadersPlugin)
     usePlugin(com.smokejumperit.gradle.ExecPlugin)
 
@@ -40,7 +41,20 @@ Add the following lines to your build script to add the jars to your buildscript
         mavenRepo urls:'http://repo.smokejumperit.com'
       }
       dependencies {
-        classpath 'com.smokejumperit:gradle-plugins:0.1'
+        classpath 'com.smokejumperit:gradle-plugins:0.2'
+      }
+    }
+
+If you want to ust use all the SmokejumperIT plugins, you can do this:
+
+    usePlugin(com.smokejumperit.gradle.AllPlugins)
+
+    buildscript {
+      repositories {
+        mavenRepo urls:'http://repo.smokejumperit.com'
+      }
+      dependencies {
+        classpath 'com.smokejumperit:gradle-plugins:0.2'
       }
     }
 
