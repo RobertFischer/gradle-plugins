@@ -12,4 +12,9 @@ abstract class SjitPlugin implements Plugin {
   
   abstract void use(Project project, ProjectPluginsContainer projectPluginsHandler);
 
+  void inProject(project, Closure impl) {
+    impl.delegate = project
+    impl()
+  }
+
 }

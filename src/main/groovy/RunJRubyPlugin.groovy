@@ -6,7 +6,7 @@ import org.gradle.api.plugins.*
 class RunJRubyPlugin extends SjitPlugin {
   void use(Project project, ProjectPluginsContainer projectPluginsHandler) { 
     def pluginLogger = this.logger
-    def impl = {
+    inProject(project) {
       usePlugin(ClassLoadersPlugin)
       configurations { runJRuby }
       dependencies { 
@@ -22,7 +22,5 @@ class RunJRubyPlugin extends SjitPlugin {
         curThread.setContextClassLoader(ClassLoader.systemClassLoader) // Allow JRuby to be GC'ed
       }
     }
-    impl.delegate = project
-    impl()
   }
 }
