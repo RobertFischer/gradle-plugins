@@ -28,6 +28,12 @@ Provides methods `exec(cmd)` and `exec(cmd, baseDir)` on the project to execute 
 
     project.exec("ls -al", project.buildDir)
 
+## EnvPlugin
+
+### Description
+
+Provides a map property on the project named `env` consisting of the external system's environment variables.  Also provides a method `env(key)` on the project that will return a particular environment variable's value, and explode if it does not exist.
+
 # Installation
 
 Add the following lines to your build script to add the jars to your buildscript classpath and use the plugins:

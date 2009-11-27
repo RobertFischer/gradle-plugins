@@ -17,6 +17,8 @@ class AllPlugins extends SjitPlugin {
   }
 
   void use(Project project, ProjectPluginsContainer projectPluginsHandler) { 
+    project.logger.debug("Going to load these plugins: $plugins")
+
     def classLoader = this.class.classLoader
 
     plugins.each {
