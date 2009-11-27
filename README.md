@@ -12,6 +12,8 @@ Provides two methods on the `project` object to work with configuration classloa
 
 * `classFor(configName, className)`&mdash;Looks up the class for name `className` using the class loader for config `configName`.
 
+Note that each call to one of these methods generates a new ClassLoader instance: this is a feature, not a bug, because it allows the ClassLoader to be garbage collected if it and its classes are done being consumed.  This can be critical to saving PermGen space.
+
 ### Example
 
     task(foo) << {
