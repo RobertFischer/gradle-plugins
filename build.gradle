@@ -34,7 +34,7 @@ uploadArchives {
       pom {
         groupId='com.smokejumperit'
         artifactId='gradle-plugins'
-        version='0.3-SNAPSHOT'
+        version='0.3'
       }
     }
   } 
