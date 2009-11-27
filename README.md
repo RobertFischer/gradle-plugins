@@ -8,16 +8,16 @@ These are a variety of plugins that I wrote for [Gradle](http://gradle.org) and 
 
 Provides two methods on the `project` object to work with configuration classloaders:
 
-* `classLoaderFor(configName)`&mdash;Provides a `java.lang.ClassLoader` consisting of all of the classes for a configuration.
+* `classLoaderFor(String... configNames)`&mdash;Provides a `java.lang.ClassLoader` consisting of all of the dependencies in the named configurations, in the order specified.
 
-* `classFor(configName, className)`&mdash;Looks up the class for name `className` using the class loader for config `configName`.
+* `classFor(String className, String... configNames)`&mdash;Looks up the class for name `className` using the class loader for configs in `configNames`.
 
 Note that each call to one of these methods generates a new ClassLoader instance: this is a feature, not a bug, because it allows the ClassLoader to be garbage collected if it and its classes are done being consumed.  This can be critical to saving PermGen space.
 
 ### Example
 
     task(foo) << {
-      project.classFor(bar, "my.app.Main").main()
+      project.classFor("my.app.Main", bar).main()
     }
 
 ## ExecPlugin
