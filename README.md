@@ -2,7 +2,15 @@
 
 These are a variety of plugins that I wrote for [Gradle](http://gradle.org) and figured I'd share with the world.
 
-## ClassLoaders
+All of the plugins below have the class name `com.smokejumperit.gradle.NameOfPlugin`.  So `AllPlugins` is `com.smokejumperit.gradle.AllPlugins`, and `EnvPlugin` is `com.smokejumperit.gradle.EnvPlugin`.  And so on.
+
+## AllPlugins
+
+### Description
+
+Convenience plugin that loads all the plugins listed below.
+
+## ClassLoadersPlugin
 
 ### Description
 
