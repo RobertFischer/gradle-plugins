@@ -13,7 +13,7 @@ class ClassLoadersPlugin extends SjitPlugin {
     def configUrls = new MapMaker().concurrencyLevel(2).makeComputingMap(
       [apply: { String config ->
         logger.trace("Collecting classpath URLs for configuration '$config'")
-        project.configurations."$config".collect {
+        return project.configurations."$config".collect {
           it.toURI().toURL()
         }
       }] as Function

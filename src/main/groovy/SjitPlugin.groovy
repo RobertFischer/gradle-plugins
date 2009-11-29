@@ -14,6 +14,7 @@ abstract class SjitPlugin implements Plugin {
 
   void inProject(project, Closure impl) {
     impl.delegate = project
+    impl.resolveStrategy = Closure.DELEGATE_FIRST
     impl()
   }
 

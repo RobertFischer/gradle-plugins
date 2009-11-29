@@ -12,8 +12,8 @@ class EnvPlugin extends SjitPlugin {
         envs.put("$k".replaceFirst(/^env\./, ""), v)
       }
     }
-    logger.info("Environment keys: ${envs.keySet() as SortedSet}")
-    project.metaClass.env = Collections.unmodifiableSortedMap(envs as SortedMap)
+    logger.info("Environment keys: ${envs.keySet()}")
+    project.metaClass.env = Collections.unmodifiableMap(envs as Map)
     project.metaClass.env = { k -> 
       k = k?.toString()
       if(!envs.containsKey(k)) {

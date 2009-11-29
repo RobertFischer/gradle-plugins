@@ -27,7 +27,7 @@ class AllPlugins extends SjitPlugin {
       def cls = Class.forName(name, true, classLoader)
       if(!cls) throw new Exception("Could not find class $cls")
 
-      logger.info("Delegating to using plugin $name for $project")
+      logger.info("${this.class} implies using plugin $name for $project")
       project.usePlugin(cls)
       logger.debug("Successfully used plugin $name for $project")
     }
