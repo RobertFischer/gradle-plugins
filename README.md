@@ -105,7 +105,7 @@ If you want to ust use all the SmokejumperIT plugins, you can do this:
         mavenRepo urls:'http://repo.smokejumperit.com'
       }
       dependencies {
-        classpath 'com.smokejumperit:gradle-plugins:0.2'
+        classpath 'com.smokejumperit:gradle-plugins:0.4'
       }
     }
 
