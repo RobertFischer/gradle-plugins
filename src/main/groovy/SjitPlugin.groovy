@@ -8,7 +8,7 @@ import static java.util.Collections.*
 
 abstract class SjitPlugin implements Plugin {
 
-  final Logger logger = Logging.getLogger(this.class)
+  Logger getLogger() { Logging.getLogger(this.class) }
   
   abstract void use(Project project, ProjectPluginsContainer projectPluginsHandler);
 

@@ -13,18 +13,18 @@ class RunJRubyPlugin extends SjitPlugin {
     project.usePlugin(EnvPlugin)
     project.usePlugin(ProjectExtPlugin)
     project.configurations { 
-      runJRuby 
-      runJRubyPluginYaml
+      jruby 
+      jrubyPluginYaml
     }
     project.repositories {
-      mavenCentral()
-      mavenRepo urls:"http://snakeyamlrepo.appspot.com/repository"
+      mavenCentral(name:"${this.class.simpleName}MavenCentralRepo")
+      mavenRepo(name:"${this.class.simpleName}SnakeyYamlRepo", urls:"http://snakeyamlrepo.appspot.com/repository")
     }
     project.dependencies { 
-      runJRuby "org.jruby.embed:jruby-embed:0.1.2" // TODO Update to a more recent JRuby
-      runJRubyPluginYaml "org.yaml:snakeyaml:1.5"
+      jruby "org.jruby.embed:jruby-embed:0.1.2" // TODO Update to a more recent JRuby
+      jrubyPluginYaml "org.yaml:snakeyaml:1.5"
     }
-    String[] defaultConfigs = ['runJRuby'] as String[]
+    String[] defaultConfigs = ['jruby'] as String[]
     def splitCmd = { String cmd ->
       def toker = new Toke(cmd)
       toker.delimiterMatcher = Match.splitMatcher()
@@ -32,8 +32,14 @@ class RunJRubyPlugin extends SjitPlugin {
       return toker.tokenArray
     }
 
-    def foundGemHome = findGemHome(project)
-    project.metaClass.getGemHome = {-> foundGemHome }
+    def foundGemHome = {-> // Lazy thunk
+      def gemHome = null
+      return {->
+        if(!gemHome) gemHome = findGemHome(project)
+        return gemHome
+      }
+    }.call()
+    project.metaClass.getGemHome = foundGemHome 
     project.metaClass.gemHome = { String gem -> 
       def dir = project.gemHome
       if(!dir.exists()) {
@@ -103,7 +109,7 @@ class RunJRubyPlugin extends SjitPlugin {
     def homeGemRc = new File(System.properties['user.home'], '.gemrc')
     if(homeGemRc.exists()) {
       logger.debug("Found gem.rc at $homeGemRc")
-      def Yaml = project.classFor("org.yaml.snakeyaml.Yaml", 'runJRubyPluginYaml')
+      def Yaml = project.classFor("org.yaml.snakeyaml.Yaml", 'jrubyPluginYaml')
       homeGemRc.withInputStream { inStream ->
         Map gemrc = Yaml.load(inStream) as Map
         gemHome = new File(gemrc.gemhome ?: "${gemHome}")

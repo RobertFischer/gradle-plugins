@@ -9,8 +9,8 @@ class CukePlugin extends SjitPlugin {
     project.usePlugin(RunJRubyPlugin)
     project.convention.plugins.cuke = new CukePluginConvention()
     project.convention.plugins.cuke.featuresDir = "src/test/features"
-    project.convention.plugins.cuke.configs = ['runJRuby', 'runtime']
-    project.task('runFeatures') { 
+    project.convention.plugins.cuke.configs = ['jruby', 'runtime']
+    project.task('runFeatures') << { 
       project.useGem('cucumber')
 
       def cukeBin = project.gemScript('cucumber')
