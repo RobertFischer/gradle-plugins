@@ -75,7 +75,7 @@ A plugin to run JRuby scripts and manage gems.
 
 ### Description
 
-Runs [Cucumber](http://cukes.info).  Specifically, provides a task (`runFeatures`) that executes the features, which are assumed to reside in `./src/test/features/`.  By default, the `runJRuby` and `runtime` configurations are loaded when the features are executed.
+Runs [Cucumber](http://cukes.info).  Specifically, provides a task (`runFeatures`) that executes the features, which are assumed to reside in `./src/test/features/`.  By default, the classloader for the `cuke` configuration is used when the features are executed.  That configuration includes `testRuntime`, `runtime`, `jruby`, and the classes generated from the `test` and `main` source sets.
 
 To modify the defaults, change `convention.plugin.cuke`.  The `configs` property of that object is a list of configurations to load when executing feature tests.  The `featuresDir` property of that object denotes where the root of the features reside.
 
