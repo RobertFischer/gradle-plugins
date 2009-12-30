@@ -7,6 +7,7 @@ class CukePlugin extends SjitPlugin {
   void use(Project project, ProjectPluginsContainer projectPluginsHandler) { 
     def pluginLogger = this.logger
     project.usePlugin(RunJRubyPlugin)
+    project.usePlugin(ProjectExtPlugin)
     project.convention.plugins.cuke = new CukePluginConvention()
     project.convention.plugins.cuke.featuresDir = "src/test/features"
     project.convention.plugins.cuke.configs = ['cuke']
@@ -17,6 +18,7 @@ class CukePlugin extends SjitPlugin {
       }
     }
     project.task('runFeatures') << { 
+      description = "Runs the Cucumber features"
       project.useGem('cucumber')
 
       def cukeBin = project.gemScript('cucumber')
