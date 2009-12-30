@@ -13,7 +13,7 @@ class CukePlugin extends SjitPlugin {
     project.configurations { 
       cuke {
         extendsFrom testRuntime, runtime, jruby
-        ['test', 'main'].each { sourceSet."$it".classes }
+        ['test', 'main'].each { project.sourceSets."$it".classes }
       }
     }
     project.task('runFeatures') << { 
