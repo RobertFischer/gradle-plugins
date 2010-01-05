@@ -11,9 +11,9 @@ class ProjectExtPlugin extends SjitPlugin {
     project.metaClass.tryRelativePath = { path ->
       try {
         path = project.relativePath(path)
-      } catch(gradle.api.GradleException e) {
+      } catch(GradleException e) {
         logger.trace("Could not relativize $path", e)
-      } catch(NullPointerException npe) {
+      } catch(NullPointerException e) {
         logger.trace("Attempted to relativize $path, but got NPE: returning null")
       }
       return path
