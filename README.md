@@ -115,6 +115,10 @@ See the `sample` directory of this project for a build script which does this.
 
 These plugins were written by [Robert Fischer](http://smokejumperit.com/).  They are published at [GitHub:RobertFischer/gradle-plugins](http://github.com/RobertFischer/gradle-plugins).
 
+# Additional Credit
+
+Thanks to [Jeppe Nejsum Madsen](http://jeppenejsum.wordpress.com) for some additional testing and work (found an NPE circumstance and supplied a patch).
+
 # License
 
 All these plugins are licensed under the [Creative Commons — CC0 1.0 Universal](http://creativecommons.org/publicdomain/zero/1.0/) license with no warranty (expressed or implied) for any purpose.
