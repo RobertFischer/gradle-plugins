@@ -57,7 +57,7 @@ class RunJRubyPlugin extends SjitPlugin {
         }
       }
 
-     return gemDir == null ? null : project.tryRelativePath(gemDir)
+     return project.tryRelativePath(gemDir) 
     }
     project.metaClass.gemScript = { String gem ->
       def dir = project.gemHome(gem)
