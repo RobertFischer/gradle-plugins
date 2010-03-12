@@ -30,7 +30,7 @@ class CukePlugin extends SjitPlugin {
       def configs = project.convention.plugins.cuke.configs.collect { "$it" } as String[]
       pluginLogger.debug("Configurations: $configs")
 
-      project.runJRuby("$cukeBin $featuresDir", configs)
+      project.runJRuby("$cukeBin --guess $featuresDir", configs)
     }
     project.runFeatures.dependsOn project.classes, project.testClasses
   }

@@ -21,8 +21,8 @@ class RunJRubyPlugin extends SjitPlugin {
       mavenRepo(name:"${this.class.simpleName}SnakeyYamlRepo", urls:"http://snakeyamlrepo.appspot.com/repository")
     }
     project.dependencies { 
-      jruby "org.jruby.embed:jruby-embed:0.1.2" // TODO Update to a more recent JRuby
-      jrubyPluginYaml "org.yaml:snakeyaml:1.5"
+      jruby "org.jruby.embed:jruby-embed:0.1.3" // TODO Update to a more recent JRuby
+      jrubyPluginYaml "org.yaml:snakeyaml:1.6"
     }
     String[] defaultConfigs = ['jruby'] as String[]
     def splitCmd = { String cmd ->
