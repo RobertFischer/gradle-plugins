@@ -1,5 +1,5 @@
-usePlugin('groovy')
-usePlugin('maven')
+apply plugin:'groovy'
+apply plugin:'maven'
 
 configurations {
     deployerJars
@@ -13,7 +13,7 @@ repositories {
   mavenCentral()
 }
 dependencies {
-  groovy 'org.codehaus.groovy:groovy:1.7.0'
+  groovy 'org.codehaus.groovy:groovy:1.7.4'
   deployerJars 'org.apache.maven.wagon:wagon-ssh:1.0-beta-2'
   compile fileTree(
     dir:new File(ant.properties['env.GRADLE_HOME'], 'lib').absolutePath, 
@@ -34,7 +34,7 @@ uploadArchives {
       pom {
         groupId='com.smokejumperit'
         artifactId='gradle-plugins'
-        version='0.5.2'
+        version='0.6-SNAPSHOT'
       }
     }
   } 
