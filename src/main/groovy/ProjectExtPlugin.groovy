@@ -7,7 +7,7 @@ import org.gradle.api.plugins.*
 * Various and sundry extensions to the Project API.
 */
 class ProjectExtPlugin extends SjitPlugin {
-  void use(Project project, ProjectPluginsContainer projectPluginsHandler) { 
+  void apply(Project project) {
     project.metaClass.tryRelativePath = { path ->
       try {
         path = project.relativePath(path)

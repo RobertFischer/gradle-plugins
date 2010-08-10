@@ -6,18 +6,18 @@ import org.apache.commons.lang.text.StrTokenizer as Toke
 import org.apache.commons.lang.text.StrMatcher as Match
 
 class RunJRubyPlugin extends SjitPlugin {
-  void use(Project project, ProjectPluginsContainer projectPluginsHandler) { 
+  void apply(Project project) {
     def pluginLogger = this.logger
 
-    project.usePlugin(ClassLoadersPlugin)
-    project.usePlugin(EnvPlugin)
-    project.usePlugin(ProjectExtPlugin)
+    project.apply(plugin:ClassLoadersPlugin)
+    project.apply(plugin:EnvPlugin)
+    project.apply(plugin:ProjectExtPlugin)
     project.configurations { 
       jruby 
       jrubyPluginYaml
     }
     project.repositories {
-      mavenCentral(name:"${this.class.simpleName}MavenCentralRepo")
+      mavenCentral(name:"RunJRubyPluginMavenCentralRepo")
       mavenRepo(name:"${this.class.simpleName}SnakeyYamlRepo", urls:"http://snakeyamlrepo.appspot.com/repository")
     }
     project.dependencies { 
@@ -31,6 +31,7 @@ class RunJRubyPlugin extends SjitPlugin {
       toker.quoteMatcher = Match.quoteMatcher()
       return toker.tokenArray
     }
+
 
     def foundGemHome = {-> // Lazy thunk
       def gemHome = null

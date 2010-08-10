@@ -9,12 +9,11 @@ ant.property(environment:'env')
 if(!ant.properties['env.GRADLE_HOME']) throw new Exception('Please set $GRADLE_HOME')
 
 repositories {
-  mavenRepo urls: "file://${System.properties['user.home']}/.m2/repository/"
   mavenCentral()
 }
 dependencies {
   groovy 'org.codehaus.groovy:groovy:1.7.4'
-  deployerJars 'org.apache.maven.wagon:wagon-ssh:1.0-beta-2'
+  deployerJars "org.apache.maven.wagon:wagon-ssh:1.0-beta-6" 
   compile fileTree(
     dir:new File(ant.properties['env.GRADLE_HOME'], 'lib').absolutePath, 
     includes:['*.jar']
@@ -34,7 +33,7 @@ uploadArchives {
       pom {
         groupId='com.smokejumperit'
         artifactId='gradle-plugins'
-        version='0.6-SNAPSHOT'
+        version='0.6.1-SNAPSHOT'
       }
     }
   } 

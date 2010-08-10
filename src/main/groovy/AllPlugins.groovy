@@ -17,7 +17,7 @@ class AllPlugins extends SjitPlugin {
     file.close()
   }
 
-  void use(Project project, ProjectPluginsContainer projectPluginsHandler) { 
+  void apply(Project project) {
     logger.debug("Going to load these plugins: $plugins")
 
     def classLoader = this.class.classLoader
@@ -28,7 +28,7 @@ class AllPlugins extends SjitPlugin {
       if(!cls) throw new Exception("Could not find class $cls")
 
       logger.info("${this.class} implies using plugin $name for $project")
-      project.usePlugin(cls)
+      project.apply(plugin:cls)
       logger.debug("Successfully used plugin $name for $project")
     }
     

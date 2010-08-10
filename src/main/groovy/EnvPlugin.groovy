@@ -4,7 +4,7 @@ import org.gradle.api.*
 import org.gradle.api.plugins.*
 
 class EnvPlugin extends SjitPlugin {
-  void use(Project project, ProjectPluginsContainer projectPluginsHandler) { 
+  void apply(Project project) {
     project.ant.property(environment:'env')
     def envs = [:] 
     project.ant.properties.each { k,v ->

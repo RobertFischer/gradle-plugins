@@ -8,7 +8,7 @@ import com.google.common.collect.MapMaker
 // TODO Find out if there is a ClassLoader that can delegate to multiple other classloaders
 class ClassLoadersPlugin extends SjitPlugin {
 
-  void use(Project project, ProjectPluginsContainer projectPluginsHandler) { 
+  void apply(Project project) {
 
     def configUrls = new MapMaker().concurrencyLevel(2).makeComputingMap(
       [apply: { String config ->
@@ -18,6 +18,18 @@ class ClassLoadersPlugin extends SjitPlugin {
         }
       }] as Function
     )
+
+    project.metaClass.classPathElementsFor = { String[] configs ->
+      return configs.collect {
+        configUrls[it]
+      }.flatten()*.toExternalForm().collect {
+        it.replaceFirst(/^file:/, "")
+      }
+    }
+
+    project.metaClass.classPathFor = { String[] configs ->
+      return project.classPathElementsFor(configs).join(System.properties['path.separator'])
+    }
 
     project.metaClass.classLoaderFor = { String[] configs ->
       return new URLClassLoader(configs.collect { 

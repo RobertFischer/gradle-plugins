@@ -79,33 +79,38 @@ Runs [Cucumber](http://cukes.info).  Specifically, provides a task (`runFeatures
 
 To modify the defaults, change `convention.plugin.cuke`.  The `configs` property of that object is a list of configurations to load when executing feature tests.  The `featuresDir` property of that object denotes where the root of the features reside.
 
+This is an integration with [Cuke4Duke](http://wiki.github.com/aslakhellesoy/cuke4duke/): the `ant` property of the project now has a `cuke`
+task to execute Cucumber.
+
+You may have to run with `gradle -i` in order to see the Cucumber output.
+
 # Installation
 
 Add the following lines to your build script to add the jars to your buildscript classpath and use the plugins:
 
     // Example of using two plugins
-    usePlugin(com.smokejumperit.gradle.ClassLoadersPlugin)
-    usePlugin(com.smokejumperit.gradle.ExecPlugin)
+    apply plugin:com.smokejumperit.gradle.ClassLoadersPlugin
+    apply plugin:com.smokejumperit.gradle.ExecPlugin
 
     buildscript {
       repositories {
         mavenRepo urls:'http://repo.smokejumperit.com'
       }
       dependencies {
-        classpath 'com.smokejumperit:gradle-plugins:0.5.1'
+        classpath 'com.smokejumperit:gradle-plugins:0.6.1'
       }
     }
 
 If you want to ust use all the SmokejumperIT plugins, you can do this:
 
-    usePlugin(com.smokejumperit.gradle.AllPlugins)
+    apply plugin:com.smokejumperit.gradle.AllPlugins
 
     buildscript {
       repositories {
         mavenRepo urls:'http://repo.smokejumperit.com'
       }
       dependencies {
-        classpath 'com.smokejumperit:gradle-plugins:0.5.1'
+        classpath 'com.smokejumperit:gradle-plugins:0.6.1'
       }
     }
 

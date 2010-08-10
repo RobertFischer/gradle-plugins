@@ -5,7 +5,7 @@ import org.gradle.api.plugins.*
 
 class ExecPlugin extends SjitPlugin {
 
-  void use(Project project, ProjectPluginsContainer projectPluginsHandler) { 
+  void apply(Project project) {
     project.metaClass.exec = { String cmd, String baseDir ->
       delegate.exec(cmd, new File(baseDir))
     }
