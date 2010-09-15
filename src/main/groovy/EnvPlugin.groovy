@@ -2,24 +2,23 @@ package com.smokejumperit.gradle
 
 import org.gradle.api.*
 import org.gradle.api.plugins.*
+import java.util.concurrent.*
+import java.util.concurrent.atomic.*
 
 class EnvPlugin extends SjitPlugin {
+
+  static final envCache = Collections.unmodifiableMap(System.getenv())
+
   void apply(Project project) {
-    project.ant.property(environment:'env')
-    def envs = [:] 
-    project.ant.properties.each { k,v ->
-      if(k.startsWith('env.')) {
-        envs.put("$k".replaceFirst(/^env\./, ""), v)
-      }
-    }
-    logger.info("Environment keys: ${(envs.keySet() as List).sort()}")
-    project.metaClass.env = Collections.unmodifiableMap(envs)
+    def envs = envCache
+    project.metaClass.env = envs
     project.metaClass.env = { k -> 
-      k = k?.toString()
+      k = "${k}".toString()
       if(!envs.containsKey(k)) {
         throw new Exception("Could not find system environment variable: $k (Use `env['$k']` instead of `env('$k')` to get null on not found)")
       }
       envs[k] 
     }
   }
+
 }

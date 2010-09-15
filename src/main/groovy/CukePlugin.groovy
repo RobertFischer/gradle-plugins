@@ -14,7 +14,7 @@ class CukePlugin extends SjitPlugin {
     project.apply(plugin:ProjectExtPlugin)
 
     project.convention.plugins.cuke = new CukePluginConvention()
-    project.convention.plugins.cuke.featuresDir = "src/test/features"
+    project.convention.plugins.cuke.featuresDir = "${project.projectDir}/src/test/features"
     project.convention.plugins.cuke.configs = ['cuke']
 
     project.configurations { 
@@ -45,7 +45,7 @@ class CukePlugin extends SjitPlugin {
         project.ant.properties['jruby.home'] = 
           System.properties['jruby.home'] ?:  
           project.env.JRUBY_HOME ?:
-          new File(project.buildDir, ".jruby").canonicalPath
+          new File(project.rootDir, ".gradle/.jruby").canonicalPath
       }   
       project.ant.mkdir(dir:project.ant.properties['jruby.home'])
     }   
@@ -72,12 +72,16 @@ class CukePlugin extends SjitPlugin {
     project.cukeTaskdef.dependsOn project.setJRubyClasspath
 
     project.task('cukeGems') << {
-      if(!new File(project.ant.properties['jruby.home'], "gems/cuke4duke-$cuke4DukeVersion-java").exists()) {
-        project.ant.taskdef(name:'gem', classname:'cuke4duke.ant.GemTask', 
-          classpathref:'jruby.classpath'
-        )
-        project.ant.gem(args:"install cuke4duke --version $cuke4DukeVersion --source http://gemcutter.org/")
-      }
+      project.ant.taskdef(name:'gem', classname:'cuke4duke.ant.GemTask', 
+        classpathref:'jruby.classpath'
+      )
+      project.ant.gem(args:"install cuke4duke --version $cuke4DukeVersion --source http://gemcutter.org/")
+      project.ant.gem(args:"install rspec --source http://gems.rubyforge.org/")
+    }
+    project.cukeGems.onlyIf { 
+      def file = new File(project.ant.properties['jruby.home'], "gems/cuke4duke-$cuke4DukeVersion-java")
+      println "$file exits? ${file.exists()}"
+      return !file.exists()
     }
     project.cukeGems.dependsOn project.cukeTaskdef, project.setJRubyConfig
 

@@ -12,11 +12,11 @@ repositories {
   mavenCentral()
 }
 dependencies {
-  groovy 'org.codehaus.groovy:groovy:1.7.4'
+  groovy 'org.codehaus.groovy:groovy:1.8.0-beta-1'
   deployerJars "org.apache.maven.wagon:wagon-ssh:1.0-beta-6" 
   compile fileTree(
-    dir:new File(ant.properties['env.GRADLE_HOME'], 'lib').absolutePath, 
-    includes:['*.jar']
+    dir:System.getenv().get('GRADLE_HOME'),
+    includes:['**/*.jar']
   )
 }
 
@@ -33,7 +33,7 @@ uploadArchives {
       pom {
         groupId='com.smokejumperit'
         artifactId='gradle-plugins'
-        version='0.6.1-SNAPSHOT'
+        version='0.6.2'
       }
     }
   } 
