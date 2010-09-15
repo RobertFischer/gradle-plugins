@@ -20,10 +20,16 @@ class JavaccPlugin extends SjitPlugin {
     ].each { taskName, propName ->
       project.task("make${taskName}") {
         description = "Makes the directory for '${propName}'"
-        def dir = new File(project."$propName")
-        project."$propName" = dir.toString()
-        onlyIf { !dir.exists() }
-        doLast { dir.mkdirs() }
+        onlyIf { 
+          // May change in execution
+          def dir = new File(project."$propName")
+          !dir.exists() 
+        }
+        doLast { 
+          // May change in execution
+          def dir = new File(project."$propName")
+          dir.mkdirs() 
+        }
       }
     }
 
