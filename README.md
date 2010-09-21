@@ -18,13 +18,18 @@ Provides tasks to compile JavaCC/JJTree files.  Apply the plugin and use `-t` to
 directly: otherwise, the parser will be generated and the files compiled as a prelude to `compileJava`, and the resulting parser
 will be placed into the archive of the `jar` task.
 
-The source for JavaCC/JJTree should be put in folder packages under ./src/javacc --- it's not a source-set, so there's no `java`
+The `JAVACC_HOME` environment variable (that's *environment variable*, not *Java property*) must be set to the home directory of
+the JavaCC installation, as per the `javacchome` parameter of [the Ant `javacc` task](http://ant.apache.org/manual/Tasks/javacc.html).
+
+The source for JavaCC/JJTree (including `*.java` support files) should be put in folder packages under 
+`./src/javacc` --- it's not a source-set, so there's no `java`
 or `javacc` subdirectory.  So if you want to generate your parser in `com.smokejumperit.parser`, the location for the JJTree file
 is `./src/javacc/com/smokejumperit/parser/myparser.jjt`.  If you want to change that location, change the `javaccSrcDir` property
 of your project.
 
 Java files (`*.java`) adjacent to JavaCC or JJTree files (`*.jj` or `*.jjt`) will be deleted on clean.  JavaCC files (`*.jj`) adjacent 
-to JJTree files (`*.jjt`) will be deleted on clean.
+to JJTree files (`*.jjt`) will be deleted on clean.  Any `*.java` files (or other files) not adjacent to a `*.jj` and `*.jjt` file will
+survive a clean.
 
 ## ClassLoadersPlugin
 
