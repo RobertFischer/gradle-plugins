@@ -6,6 +6,15 @@ import org.gradle.api.logging.*
 
 abstract class SjitPlugin implements Plugin<Project> {
 
-  Logger getLogger() { Logging.getLogger(this.class) }
+  def logger = Logging.getLogger(this.class) 
+  def getLog() { logger }
+
+  def propertyDefaults(Map props, Project project) {
+    props.each { k,v -> propertyDefault(project, k, v) }
+  }
+
+  def propertyDefault(Project project, String propName, defaultValue) {
+    if(!project.hasProperty(propName)) project."$propName" = defaultValue
+  }
 
 }

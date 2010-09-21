@@ -10,10 +10,12 @@ if(!ant.properties['env.GRADLE_HOME']) throw new Exception('Please set $GRADLE_H
 
 repositories {
   mavenCentral()
+  mavenRepo urls:'http://repo.smokejumperit.com'
 }
 dependencies {
-  groovy 'org.codehaus.groovy:groovy:1.8.0-beta-1'
+  groovy 'org.codehaus.groovy:groovy:1.8.0-beta-2'
   deployerJars "org.apache.maven.wagon:wagon-ssh:1.0-beta-6" 
+  //compile 'com.smokejumperit:with-log:0.3'
   compile fileTree(
     dir:System.getenv().get('GRADLE_HOME'),
     includes:['**/*.jar']
@@ -33,7 +35,7 @@ uploadArchives {
       pom {
         groupId='com.smokejumperit'
         artifactId='gradle-plugins'
-        version='0.6.2'
+        version='0.6.3'
       }
     }
   } 

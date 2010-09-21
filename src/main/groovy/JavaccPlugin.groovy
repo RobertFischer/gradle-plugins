@@ -15,6 +15,8 @@ class JavaccPlugin extends SjitPlugin {
     if(project.javaccSrcDir instanceof File) project.javaccSrcDir = project.javaccSrcDir.absolutePath
     project.javaccSrcDir = project.javaccSrcDir.toString()
 
+    def compileTo = new File(project.buildDir, "classes-javacc")
+
     [
       JavaccSrcDir: 'javaccSrcDir'
     ].each { taskName, propName ->
@@ -77,7 +79,7 @@ class JavaccPlugin extends SjitPlugin {
           dir: parent,
           include: ["*.java"]
         )
-      })
+      }) 
 
       doLast {
         allInputs.files.collect {
@@ -113,17 +115,20 @@ class JavaccPlugin extends SjitPlugin {
     ]) {
       description = "Compiles the files in the javaccSrcDir"
       source = project.javaccSrcDir
-      destinationDir = new File(project.buildDir, "classes-javacc")
+      destinationDir = compileTo
       classpath = project.files(destinationDir)
-      doLast {
-        def myClassesRoot = destinationDir
-        def myClassesFiles = project.files(myClassesRoot)
-        project.sourceSets.each { ss ->
-          ss.compileClasspath = ss.compileClasspath + myClassesFiles
-        }
-        project.jar {
-          from myClassesRoot
-        }
+
+      def myClassesRoot = destinationDir
+      def myClassesFiles = project.files(myClassesRoot)
+      def addClasspath = { ss->
+        ss.compileClasspath = ss.compileClasspath + myClassesFiles
+        ss.runtimeClasspath = ss.runtimeClasspath + myClassesFiles
+      }
+
+      project.sourceSets.each(addClasspath)
+      project.sourceSets.whenObjectAdded(addClasspath)
+      project.jar {
+        from myClassesRoot
       }
     }
 
