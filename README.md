@@ -10,6 +10,13 @@ All of the plugins below have the class name `com.smokejumperit.gradle.NameOfPlu
 
 Convenience plugin that loads all the plugins listed below.
 
+## OneJar Plugin
+
+### Description
+
+Provides tasks to generate a single executable jar containing dependencies.  Uses [one-jar](http://one-jar.sourceforge.net) under the hood.
+The resulting jar file will be next to the standard jar, but with '-fat' attached to the name.
+
 ## Javacc Plugin
 
 ### Description

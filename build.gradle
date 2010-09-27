@@ -15,11 +15,22 @@ repositories {
 dependencies {
   groovy 'org.codehaus.groovy:groovy:1.8.0-beta-2'
   deployerJars "org.apache.maven.wagon:wagon-ssh:1.0-beta-6" 
-  //compile 'com.smokejumperit:with-log:0.3'
   compile fileTree(
     dir:System.getenv().get('GRADLE_HOME'),
     includes:['**/*.jar']
   )
+}
+
+processResources {
+	includes = excludes = []
+	include "**/*"
+	exclude "**/.gitignore"
+}
+
+jar {
+	includes = excludes = []
+	include "**/*"
+	exclude "**/.gitignore"
 }
 
 uploadArchives { 
@@ -35,7 +46,7 @@ uploadArchives {
       pom {
         groupId='com.smokejumperit'
         artifactId='gradle-plugins'
-        version='0.6.3'
+        version='0.6.4-SNAPSHOT'
       }
     }
   } 

@@ -40,7 +40,7 @@ class MavenProxyPlugin extends SjitPlugin {
         if(b == -1) throw new IOException("No data to be read from repository root")
       } catch(IOException ioe) {  
         logger.info("Assuming server is not yet running: failed to open URL connection to " + url)
-        logger.debug("Error in connection to server at " + url + " (not yet started?)", ioe)
+        logger.debug("Error in connection to server at " + url + " (not yet started?) >> ${ioe.message}")
         startServer(props)
         addRepository(project)
         return
@@ -53,7 +53,8 @@ class MavenProxyPlugin extends SjitPlugin {
   void startServer(Properties props) {
     logger.debug("Starting server at " + url)
 
-    def wkdir = new File(System.getProperty("user.dir", "."), ".gradle/maven-proxy").absoluteFile
+    def wkdir = new File(System.getProperty("user.home", "."), ".gradle/maven-proxy").absoluteFile
+    logger.info("Starting server in " + wkdir)
     if(wkdir.mkdirs()) logger.debug("Created directory " + wkdir + " for Maven Proxy")
     
     if(props['repo.local.store']?.startsWith(".")) {
@@ -87,13 +88,15 @@ class MavenProxyPlugin extends SjitPlugin {
     }
 
     log.info("Starting the Maven-Proxy server in " + wkdir)
-    ProcessBuilder pb = new ProcessBuilder([
+    def procArgs = [
       new File(System.getProperty("java.home", ""), "/bin/java").canonicalPath, 
       "-Xmx64m",
       "-Dlog4j.configuration=${log4jFile.absolutePath}",
       "-jar", jarFile.absolutePath, 
       propsFile.absolutePath
-    ] as String[])
+    ] 
+    log.debug("Starting process with arguments: " + procArgs)
+    ProcessBuilder pb = new ProcessBuilder(procArgs as String[])
     pb.directory(wkdir).redirectErrorStream(true).start()
   }
 
