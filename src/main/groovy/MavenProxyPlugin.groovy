@@ -4,6 +4,7 @@ import org.gradle.api.*
 import org.gradle.api.tasks.*
 import org.gradle.api.plugins.*
 import java.util.concurrent.atomic.AtomicBoolean
+import org.gradle.api.artifacts.maven.*
 
 class MavenProxyPlugin extends SjitPlugin {
 
@@ -23,30 +24,57 @@ class MavenProxyPlugin extends SjitPlugin {
     }
   }
 
+	void registerRepoWithServer(repoUrl) {
+		if(!url) {
+			throw new IllegalStateException("Require Maven Proxy URL to be generated")
+		}
+		repoUrl = "/servlet/PutRepo?url=" + URLEncoder.encode("$repoUrl", "UTF-8")
+		repoUrl = new URL(url, repoUrl)
+		try {
+			def is = repoUrl.openConnection()?.inputStream()
+			logger.debug("Registered repo URL with Maven Proxy [$repoUrl]\n${is?.text}")
+			is?.close()
+		} catch (IOException ioe) {
+			logger.warn("Error posting a repo URL to the Maven Proxy [$repoUrl]", ioe)
+		}
+	}
+
   void apply(Project project) {
+		project.metaClass.addMavenRepo = { proxyUrl ->
+			if(proxyUrl) {
+				project.afterEvaluate {
+					registerRepoWithServer(proxyUrl)
+					project.repositories {
+						mavenRepo urls:proxyUrl
+					}
+				}
+			}
+		}
+		project.metaClass.setMavenRepos = { List proxyUrls ->
+			proxyUrls?.unique()?.each { project.addMavenRepo(it) }
+		}
+
     project.afterEvaluate {
-      if(!didInit.compareAndSet(false, true))  {
-        addRepository(project)
-        return
-      }
- 
       Properties props = loadProperties(project)
-      
-      url = new URL("${props['serverName']}/${props['prefix']}")
+
+      if(!url) url = new URL("${props['serverName'] ?: ("127.0.0.1:" + props['port'])}/${props['prefix']}")
+
+			// See if the server is running
       try {
-        def conn = url.openConnection()
-        conn.readTimeout = 100
-        def b = conn.inputStream.read()
-        if(b == -1) throw new IOException("No data to be read from repository root")
+				if(!didInit.compareAndSet(false, true))  {
+					def conn = url.openConnection()
+					conn.readTimeout = 100
+					def b = conn.inputStream.read()
+					if(b == -1) throw new IOException("No data to be read from repository root")
+					logger.info("Assuming server is running: could open URL connection to " + url)
+				}
       } catch(IOException ioe) {  
         logger.info("Assuming server is not yet running: failed to open URL connection to " + url)
         logger.debug("Error in connection to server at " + url + " (not yet started?) >> ${ioe.message}")
         startServer(props)
-        addRepository(project)
-        return
-      }
-
-      logger.info("Assuming server is running: could open URL connection to " + url)
+      } finally {
+				addRepository(project)
+			}
     }
   }
 
