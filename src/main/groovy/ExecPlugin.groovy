@@ -10,8 +10,13 @@ class ExecPlugin extends SjitPlugin {
       delegate.exec(cmd, new File(baseDir))
     }
     project.metaClass.exec = { String cmd, File baseDir=new File('.') ->
-
-      logger.info("Executing `$cmd` (in $baseDir)")
+			project.execIn(baseDir, cmd)
+		}
+		project.metaClass.execIn = { File baseDir, Object... cmd ->
+			project.execIn(baseDir, cmd*.toString() as String[])
+		}
+		project.metaClass.execIn = { File baseDir, String... cmd ->
+      logger.info("Executing `${cmd.join(' ')}` (in $baseDir)")
       def proc = Runtime.runtime.exec(cmd, null, baseDir)
 
       logger.trace("Routing output and error streams for `$cmd`")

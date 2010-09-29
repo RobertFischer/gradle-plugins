@@ -2,13 +2,15 @@ package com.smokejumperit.gradle
 
 import org.gradle.api.*
 import org.gradle.api.plugins.*
+import org.gradle.api.artifacts.*
 
 class OneJarPlugin extends SjitPlugin {
 	
 	static final String jarName = "one-jar-ant-task-0.97.jar";
 
   void apply(Project project) {
-		if(!project.getTasksByName('jar', false)) project.apply(plugin:Java)
+		project.apply(plugin:'java')
+		project.apply(plugin:ExecPlugin)
 
 		final oneJarDir = new File(project.rootProject.buildDir, "one-jar")
 
@@ -40,9 +42,9 @@ class OneJarPlugin extends SjitPlugin {
 			}
 		}
 
-		project.task('makeOneJar', dependsOn:[project.tasks.jar, root.tasks.typedefOneJar]) {
+		project.task('oneJar', dependsOn:[project.tasks.jar, root.tasks.typedefOneJar]) {
 			def jar = project.tasks.jar
-			File jarFile = new File(jar.destinationDir, jar.archiveName - jar.extension - "." + "-all." + jar.extension)
+			File jarFile = new File(jar.destinationDir, jar.archiveName - jar.extension - "." + "-oneJar." + jar.extension)
 			description = "Makes the fat jar file"
 			inputs.files jar.outputs.files
 			outputs.files jarFile
@@ -55,21 +57,50 @@ class OneJarPlugin extends SjitPlugin {
 							ant.fileset(dir:depDir.absolutePath)
 						}
 					}
+					project.sourceSets*.resources*.getSrcDirs()?.flatten()?.findAll { it?.exists() }?.each { resdir ->
+						ant.fileset(dir:resdir.absolutePath)
+					}
 					ant.lib {
 						runConf.findAll { !it.isDirectory() }.each { depFile ->
 							ant.fileset(file:depFile.absolutePath)
 						}
 					}
 				}
+
+				Date date = new Date()
+				String name = jar.baseName
+				project.configurations.archives.addArtifact(
+					[
+						getClassifier: { -> "standalone" },
+						getDate: {-> date },
+						getExtension: {-> "jar" },
+						getType: {-> "jar" },
+						getFile: {-> jarFile },
+						getName: {-> name }
+					] as PublishArtifact
+				)
 			}
 		}
+/*
+		project.task("execOneJar", dependsOn:[project.tasks.oneJar]) {
+			doFirst {
+				def workingDir = new File(new File(project.buildDir, "one-jar"), "exec")
+				workingDir.mkdirs()
+				def jarFile = project.tasks.oneJar.outputs.files.singleFile
+				project.execIn(workingDir, 
+					"${System.getProperty("java.home", "")}/bin/java", "-jar", jarFile.absolutePath
+				)
+			}
+		}
+*/
 	}
 
 	File writeOneJarManifestFile(jar) {
 		def manifestFile = File.createTempFile("one-jar-manifest", "mf")
 		manifestFile.withWriter { w -> 
 			def m = jar.manifest.effectiveManifest
-			m.attributes.put("One-Jar-Main-Class", m.attributes.remove("Main-Class"))
+			String main = m.attributes.remove("Main-Class")
+			if(main) m.attributes.put("One-Jar-Main-Class", main)
 			m.writeTo(w)
 		}
 		manifestFile.deleteOnExit()
