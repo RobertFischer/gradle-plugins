@@ -22,19 +22,19 @@ properties file, that identifier becomes available in the `dependencies` configu
 
 In your `~/.gradle/dependencies.properties`:
 
-  commonsLang: commons-lang:commons-lang:2.5
+    commonsLang: commons-lang:commons-lang:2.5
 
 In your `build.gradle`:
 
-  apply plugin:com.smokejumperit.gradle.DepNamesPlugin
-  apply plugin:'java'
+    apply plugin:com.smokejumperit.gradle.DepNamesPlugin
+    apply plugin:'java'
 
-  repositories {
-    mavenCentral()
-  }
-  dependencies {
-    compile commonsLang
-  }
+    repositories {
+      mavenCentral()
+    }
+    dependencies {
+      compile commonsLang
+    }
 
 Result: You now have commonsLang in your classpath.
 
