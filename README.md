@@ -27,7 +27,7 @@ In `~/.gradle/dependencies.properties`:
 In `build.gradle`:
 
   apply plugin:com.smokejumperit.gradle.DepNamesPlugin
-	apply plugin:'java'
+  apply plugin:'java'
 
 	repositories {
 		mavenCentral()
