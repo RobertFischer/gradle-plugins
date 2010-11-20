@@ -20,11 +20,11 @@ properties file, that identifier becomes available in the `dependencies` configu
 
 ### Example
 
-In `~/.gradle/dependencies.properties`:
+In your `~/.gradle/dependencies.properties`:
 
-  *commonsLang*: commons-lang:commons-lang:2.5
+  _commonsLang_: commons-lang:commons-lang:2.5
 
-In `build.gradle`:
+In your `build.gradle`:
 
   apply plugin:com.smokejumperit.gradle.DepNamesPlugin
   apply plugin:'java'
@@ -33,7 +33,7 @@ In `build.gradle`:
 		mavenCentral()
 	}
 	dependencies {
-		compile *commonsLang*
+		compile _commonsLang_
 	}
 
 Result: You now have commonsLang in your classpath.
