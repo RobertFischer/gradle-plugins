@@ -17,11 +17,22 @@ class DepNamesPlugin extends SjitPlugin {
 
   void apply(Project project) {
 		def props = new Properties()
+
 		if(propFile.exists()) {
 			propFile.withReader { reader ->
 				props.load(reader)
 			}
 		}
+
+		def projectPropFile = new File(project.rootDir, 
+			"dependencies.properties"
+		).absoluteFile
+		if(projectPropFile.exists()) {
+			projectPropFile.withReader { reader ->
+				props.load(reader)
+			}
+		}
+
 		props.each { k, v ->
 			DependencyHandler.metaClass."$k" = v
 		}

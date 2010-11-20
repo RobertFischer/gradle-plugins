@@ -24,6 +24,10 @@ In your `~/.gradle/dependencies.properties`:
 
     commonsLang: commons-lang:commons-lang:2.5
 
+In your `$ROOTDIR/dependencies.properties`:
+
+    commonsIo: commons-io:commons-io:2.0
+
 In your `build.gradle`:
 
     apply plugin:com.smokejumperit.gradle.DepNamesPlugin
