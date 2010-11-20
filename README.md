@@ -18,6 +18,9 @@ Provides the ability to keep external dependency names and versions in one locat
 a number of projects.  By assigning a Java identifier as a key and a configuration spec as a value in a 
 properties file, that identifier becomes available in the `dependencies` configuration block.
 
+The definitions can either be defined globally or in the root directory of the project, with the 
+root directory definitions replacing global definitions.
+
 ### Example
 
 In your `~/.gradle/dependencies.properties`:
