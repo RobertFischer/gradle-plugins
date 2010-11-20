@@ -5,7 +5,7 @@ import org.gradle.api.plugins.*
 
 class CukePlugin extends SjitPlugin {
   void apply(Project project) {
-    def cuke4DukeVersion = "0.3.2"
+    def cuke4DukeVersion = "0.4.2"
 
     def pluginLogger = this.logger
 
@@ -19,8 +19,7 @@ class CukePlugin extends SjitPlugin {
 
     project.configurations { 
       cuke {
-        extendsFrom testRuntime, runtime
-        ['test', 'main'].each { project.sourceSets."$it".classes }
+        extendsFrom(testRuntime, runtime)
       }
     }
     project.repositories {
@@ -29,11 +28,6 @@ class CukePlugin extends SjitPlugin {
     }
     project.dependencies {
       cuke "cuke4duke:cuke4duke:$cuke4DukeVersion"
-/*
-      cuke 'org.jruby:jruby-complete:1.4.0'
-      cuke 'org.picocontainer:picocontainer:2.10.2'
-      cuke 'junit:junit:4.8.1'
-*/
     }
 
     def cukeConfigs = {->
@@ -79,8 +73,8 @@ class CukePlugin extends SjitPlugin {
       project.ant.gem(args:"install rspec --source http://gems.rubyforge.org/")
     }
     project.cukeGems.onlyIf { 
-      def file = new File(project.ant.properties['jruby.home'], "gems/cuke4duke-$cuke4DukeVersion-java")
-      println "$file exits? ${file.exists()}"
+      def file = new File(project.ant.properties['jruby.home'], "gems/cuke4duke-$cuke4DukeVersion")
+      pluginLogger.info("$file exits? ${file.exists()}")
       return !file.exists()
     }
     project.cukeGems.dependsOn project.cukeTaskdef, project.setJRubyConfig
@@ -98,7 +92,13 @@ class CukePlugin extends SjitPlugin {
       project.ant.mkdir(dir:outputDir)
       // --require target/test-classes -- Do we really need that?
       project.ant.cuke(args:"--verbose --color --format pretty --format junit --out $outputDir $featuresDir") {
-        classpath(refid:'jruby.classpath')
+        project.ant.classpath {
+					project.ant.pathelement(path:project.configurations.cuke.asPath)
+					project.sourceSets.each { ss ->
+						project.ant.pathelement(path:ss.compileClasspath.asPath)
+						project.ant.pathelement(location:ss.classesDir.canonicalPath)
+					}
+				}
       }
 
     }

@@ -10,6 +10,34 @@ All of the plugins below have the class name `com.smokejumperit.gradle.NameOfPlu
 
 Convenience plugin that loads all the plugins listed below.
 
+## DepNames Plugin
+
+### Description
+
+Provides the ability to keep external dependency names and versions in one location, and use them throughout
+a number of projects.  By assigning a Java identifier as a key and a configuration spec as a value in a 
+properties file, that identifier becomes available in the `dependencies` configuration block.
+
+### Example
+
+In `~/.gradle/dependencies.properties`:
+
+  *commonsLang*: commons-lang:commons-lang:2.5
+
+In `build.gradle`:
+
+  apply plugin:com.smokejumperit.gradle.DepNamesPlugin
+	apply plugin:'java'
+
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		compile *commonsLang*
+	}
+
+Result: You now have commonsLang in your classpath.
+
 ## OneJar Plugin
 
 ### Description

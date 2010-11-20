@@ -3,6 +3,7 @@ package com.smokejumperit.gradle
 import org.gradle.api.*
 import org.gradle.api.tasks.*
 import org.gradle.api.plugins.*
+import java.util.concurrent.*
 import java.util.concurrent.atomic.AtomicBoolean
 import org.gradle.api.artifacts.maven.*
 
@@ -10,6 +11,19 @@ class MavenProxyPlugin extends SjitPlugin {
 
   static final AtomicBoolean didInit = new AtomicBoolean(false)
   static volatile URL url
+
+	static final Set registeredUrls = new ConcurrentSkipListSet()
+
+	void setUrl(URL newUrl) {
+		synchronized(url == null ? newUrl : url) {
+			if(url != newUrl) {
+				synchronized(newUrl) {
+					url = newUrl
+					registeredUrls.clear()
+				}
+			}
+		}
+	}
   
   void addRepository(Project project) {
     if(!url) {
@@ -28,20 +42,24 @@ class MavenProxyPlugin extends SjitPlugin {
 		if(!url) {
 			throw new IllegalStateException("Require Maven Proxy URL to be generated")
 		}
-		repoUrl = "/servlet/PutRepo?url=" + URLEncoder.encode("$repoUrl", "UTF-8")
-		repoUrl = new URL(url, repoUrl)
-		try {
-			def is = repoUrl.openConnection()?.inputStream()
-			logger.debug("Registered repo URL with Maven Proxy [$repoUrl]\n${is?.text}")
-			is?.close()
-		} catch (IOException ioe) {
-			logger.warn("Error posting a repo URL to the Maven Proxy [$repoUrl]", ioe)
+		synchronized(url) {
+			if(!registeredUrls.add(repoUrl)) return
+			repoUrl = "/servlets/PutRepo?url=" + URLEncoder.encode("$repoUrl", "UTF-8")
+			repoUrl = new URL(url, repoUrl)
+			try {
+				def is = repoUrl.openConnection()?.inputStream()
+				logger.debug("Registered repo URL with Maven Proxy [$repoUrl]\n${is?.text}")
+				is?.close()
+			} catch (IOException ioe) {
+				logger.warn("Error posting a repo URL to the Maven Proxy [$repoUrl]", ioe)
+			}
 		}
 	}
 
   void apply(Project project) {
 		project.metaClass.addMavenRepo = { proxyUrl ->
 			if(proxyUrl) {
+				proxyUrl = proxyUrl.toString()
 				project.afterEvaluate {
 					registerRepoWithServer(proxyUrl)
 					project.repositories {
@@ -54,28 +72,26 @@ class MavenProxyPlugin extends SjitPlugin {
 			proxyUrls?.unique()?.each { project.addMavenRepo(it) }
 		}
 
-    project.afterEvaluate {
-      Properties props = loadProperties(project)
+		if(!didInit.getAndSet(true)) {
+			Properties props = loadProperties(project)
 
-      if(!url) url = new URL("${props['serverName'] ?: ("127.0.0.1:" + props['port'])}/${props['prefix']}")
+			url = new URL("${props['serverName'] ?: ("127.0.0.1:" + props['port'])}/${props['prefix']}")
 
 			// See if the server is running
-      try {
-				if(!didInit.compareAndSet(false, true))  {
-					def conn = url.openConnection()
-					conn.readTimeout = 100
-					def b = conn.inputStream.read()
-					if(b == -1) throw new IOException("No data to be read from repository root")
-					logger.info("Assuming server is running: could open URL connection to " + url)
-				}
-      } catch(IOException ioe) {  
-        logger.info("Assuming server is not yet running: failed to open URL connection to " + url)
-        logger.debug("Error in connection to server at " + url + " (not yet started?) >> ${ioe.message}")
-        startServer(props)
-      } finally {
+			try {
+				def conn = url.openConnection()
+				conn.readTimeout = 100
+				def b = conn.inputStream.read()
+				if(b == -1) throw new IOException("No data to be read from repository root")
+				logger.info("Assuming server is running: could open URL connection to " + url)
+			} catch(IOException ioe) {  
+				logger.debug("Error in connection to server at ${url} (not yet started?) >> ${ioe.message}")
+				logger.info("Assuming server is not yet running: failed to open URL connection to ${url}\n\t(Starting server now...)")
+				startServer(props)
+			} finally {
 				addRepository(project)
 			}
-    }
+		}
   }
 
   void startServer(Properties props) {
@@ -141,25 +157,33 @@ class MavenProxyPlugin extends SjitPlugin {
       }
     }
 
-    loadUrlProperties(props)
+//    loadUrlProperties(project, props)
   
     return props
   }
+/*
+  void loadUrlProperties(Project fromProject, Properties toProps) {
+    [
+			new File(System.getProperty("user.dir", "."), ".gradle/maven-proxy-urls.txt"),
+			new File(project.rootDir, "maven-proxy-urls.txt"),
+			new File(project.rootProject.rootDir, "maven-proxy-urls.txt")
+		].each { loadUrlProperties(it, toProps) }
+	} 
 
-  void loadUrlProperties(Properties props) {
-    def urlFile = new File(System.getProperty("user.dir", "."), ".gradle/maven-proxy-urls.txt").absoluteFile
-    if(urlFile.exists()) {
+	void loadUrlProperties(File fromFile, Properties toProps) {
+    def urlFile = fromFile?.absoluteFile
+    if(urlFile?.exists()) {
       log.info("Loading Maven-Proxy URL file at " + urlFile)
       urlFile.text.split("\\s+").unique().each { url ->
-        log.debug("Adding url " + url)
-        def urlName = url.replace("^http://", "").replace("[^\\w]+", "-")
+        def urlName = url.replaceAll("^http://", "").replaceAll("[^\\w]+", "-")
         props["repo.${urlName}.url"] = url
         props["repo.${urlName}.cache.period"] = "7200"
         props["repo.list"] = props["repo.list"] + ",${urlName}"
+        log.debug("Added url " + url + " (" + urlName + ")")
       }
     } else {
       log.debug("No Maven-Proxy URL file found at " + urlFile + " (it's optional; don't panic!)")
     }
   }
-
+*/
 }

@@ -109,20 +109,20 @@ class JavaccPlugin extends SjitPlugin {
       }
     }
     project.tasks.clean.dependsOn project.tasks.deleteJavaccGen
-    
+
+		project.tasks.compileJava.dependsOn project.tasks.generateFromJavacc
+   
     project.task('compileJavacc', type:Compile, dependsOn:[
       project.tasks.generateFromJavacc, project.tasks.makeJavaccSrcDir
     ]) {
       description = "Compiles the files in the javaccSrcDir"
       source = project.javaccSrcDir
       destinationDir = compileTo
-      classpath = project.files(destinationDir)
+      classpath = project.configurations.compile
 
       def myClassesRoot = destinationDir
-      def myClassesFiles = project.files(myClassesRoot)
       def addClasspath = { ss->
-        ss.compileClasspath = ss.compileClasspath + myClassesFiles
-        ss.runtimeClasspath = ss.runtimeClasspath + myClassesFiles
+        ss.compileClasspath = ss.compileClasspath + project.files(myClassesRoot)
       }
 
       project.sourceSets.each(addClasspath)
@@ -131,7 +131,6 @@ class JavaccPlugin extends SjitPlugin {
         from myClassesRoot
       }
     }
-
     project.tasks.compileJava.dependsOn project.tasks.compileJavacc
 
   }

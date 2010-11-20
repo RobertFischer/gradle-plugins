@@ -46,7 +46,7 @@ uploadArchives {
       pom {
         groupId='com.smokejumperit'
         artifactId='gradle-plugins'
-        version='0.6.4-SNAPSHOT'
+        version='0.6.6'
       }
     }
   } 
@@ -55,7 +55,7 @@ uploadArchives {
 task notePlugins << {
   def names = []
   sourceSets.main.allGroovy.matching { 
-    include('**/*Plugin.groovy')
+    include('**/com/smokejumperit/gradle/*Plugin.groovy')
     exclude('**/SjitPlugin.groovy')
   }.visit {
     names << it.file.name.replaceFirst(/\.groovy$/, '')
