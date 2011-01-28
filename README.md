@@ -49,7 +49,8 @@ Result: You now have commonsLang in your classpath.
 
 ### Description
 
-Provides tasks to generate a single executable jar containing dependencies.  Uses [one-jar](http://one-jar.sourceforge.net) under the hood.
+Provides the `oneJar` task to generate a single executable jar containing dependencies.  
+Uses [one-jar](http://one-jar.sourceforge.net) under the hood.
 The resulting jar file will be next to the standard jar, but with '-fat' attached to the name.
 
 ## Javacc Plugin
@@ -160,7 +161,7 @@ Add the following lines to your build script to add the jars to your buildscript
         mavenRepo urls:'http://repo.smokejumperit.com'
       }
       dependencies {
-        classpath 'com.smokejumperit:gradle-plugins:0.6.7'
+        classpath 'com.smokejumperit:gradle-plugins:0.6.8'
       }
     }
 
@@ -173,7 +174,7 @@ If you want to ust use all the SmokejumperIT plugins, you can do this:
         mavenRepo urls:'http://repo.smokejumperit.com'
       }
       dependencies {
-        classpath 'com.smokejumperit:gradle-plugins:0.6.7'
+        classpath 'com.smokejumperit:gradle-plugins:0.6.8'
       }
     }
 
