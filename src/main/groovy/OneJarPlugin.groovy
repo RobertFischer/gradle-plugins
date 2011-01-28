@@ -32,17 +32,15 @@ class OneJarPlugin extends SjitPlugin {
 			}
 		}
 
-		if(!root.getTasksByName('typedefOneJar', false)) {
-			root.task('typedefOneJar', dependsOn:root.tasks.unpackOneJar) {
-				description = "Defines the one-jar task on ant"
-				doFirst {
-					ant.property(name:"one-jar.dist.dir", value:oneJarDir.absolutePath)
-					ant.import(file:new File(oneJarDir, "one-jar-ant-task.xml").absolutePath, optional:false)
-				}
+		project.task('typedefOneJar', dependsOn:root.tasks.unpackOneJar) {
+			description = "Defines the one-jar task on ant"
+			doFirst {
+				ant.property(name:"one-jar.dist.dir", value:oneJarDir.absolutePath)
+				ant.import(file:new File(oneJarDir, "one-jar-ant-task.xml").absolutePath, optional:false)
 			}
 		}
 
-		project.task('oneJar', dependsOn:[project.tasks.jar, root.tasks.typedefOneJar]) {
+		project.task('oneJar', dependsOn:[project.tasks.jar, project.tasks.typedefOneJar]) {
 			def jar = project.tasks.jar
 			File jarFile = new File(jar.destinationDir, jar.archiveName - jar.extension - "." + "-oneJar." + jar.extension)
 			description = "Makes the fat jar file"
