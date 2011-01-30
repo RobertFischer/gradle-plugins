@@ -7,18 +7,37 @@ import org.gradle.api.tasks.compile.Compile
 
 class JavaccPlugin extends SjitPlugin {
 
+	private interface Files {
+		interface Ext {
+			String JAVA = ".java"
+			String JAVACC = ".jj"
+			String JJTREE = ".jjt"
+		}
+		String ALL_JAVA = "*${Ext.JAVA}"
+		String ALL_JAVACC = "*${Ext.JAVACC}"
+		String ALL_JJTREE = "*${Ext.JJTREE}"
+	}
+
+	private interface Props {
+		String JAVACC_SRC_DIR = "javaccSrcDir"
+	}
+
   void apply(Project project) {
     project.apply(plugin:'java')
     project.apply(plugin:EnvPlugin)
 
-    if(!project.hasProperty('javaccSrcDir')) project.javaccSrcDir = new File(project.projectDir, "src/javacc")
-    if(project.javaccSrcDir instanceof File) project.javaccSrcDir = project.javaccSrcDir.absolutePath
-    project.javaccSrcDir = project.javaccSrcDir.toString()
+    if(!project.hasProperty(Props.JAVACC_SRC_DIR)) {
+			project."${Props.JAVACC_SRC_DIR}" = new File(project.projectDir, "src/javacc")
+		}
+    if(project."${Props.JAVACC_SRC_DIR}" instanceof File) {
+			project."${Props.JAVACC_SRC_DIR}" = project.javaccSrcDir.absolutePath
+		}
+    project."${Props.JAVACC_SRC_DIR}" = project."${Props.JAVACC_SRC_DIR}".toString()
 
     def compileTo = new File(project.buildDir, "classes-javacc")
 
     [
-      JavaccSrcDir: 'javaccSrcDir'
+      JavaccSrcDir: Props.JAVACC_SRC_DIR
     ].each { taskName, propName ->
       project.task("make${taskName}") {
         description = "Makes the directory for '${propName}'"
@@ -48,10 +67,10 @@ class JavaccPlugin extends SjitPlugin {
       description = "Makes JavaCC files from JJTree files"
       inputs.files project.fileTree(
         dir: project.javaccSrcDir,
-        include: ["**/*.jjt"]
+        include: ["**/${Files.ALL_JJTREE}"]
       )
       outputs.files project.files(inputs.files.files.collect { 
-        new File(it.parentFile, it.name - ".jjt" + ".jj")
+        new File(it.parentFile, it.name - Files.Ext.JJTREE + Files.Ext.JAVACC)
       })
       doLast {
         inputs.files.files.each { file ->
@@ -71,20 +90,20 @@ class JavaccPlugin extends SjitPlugin {
       description = "Makes Java files from JavaCC files"
       inputs.files (project.tasks.generateFromJJTree.inputs.files + project.fileTree(
         dir: project.javaccSrcDir,
-        include: ["**/*.jj"]
+        include: ["**/${Files.ALL_JAVACC}"]
       ))
       def allInputs = project.tasks.generateFromJJTree.outputs.files + inputs.files
       outputs.files allInputs.files*.parent.unique().collect({ parent ->
         project.fileTree(
           dir: parent,
-          include: ["*.java"]
+          include: [Files.ALL_JAVA]
         )
       }) 
 
       doLast {
         allInputs.files.collect {
-          it.name.endsWith(".jjt") ? 
-            new File(it.parentFile, it.name - ".jjt" + ".jj") : it
+          it.name.endsWith(Files.Ext.JJTREE) ? 
+            new File(it.parentFile, it.name - Files.Ext.JJTREE + Files.Ext.JAVACC) : it
         }.unique().findAll { it.exists() }.each { file ->
           project.ant.javacc(
             javaccHome:project.env.JAVACC_HOME, 
@@ -96,14 +115,15 @@ class JavaccPlugin extends SjitPlugin {
     }
 
     project.task('deleteJavaccGen') << {
-      description = "Deletes *.jj and *.java adjacent to *.jjt and *.java adjacent to *.jj"
+      description = "Deletes ${Files.ALL_JAVACC} and ${Files.ALL_JAVA} adjacent to ${Files.Ext.JJTREE}, " +
+										"and ${Files.ALL_JAVA} adjacent to ${Files.ALL_JAVACC}"
       ant.delete(verbose:true, quiet:false) {
         new File(project.javaccSrcDir).eachFileRecurse { file ->
-          if(file.name.endsWith(".jjt")) {
-            fileset(dir:file.parent, includes:'*.jj')
-            fileset(dir:file.parent, includes:'*.java')
-          } else if(file.name.endsWith(".jj")) {
-            fileset(dir:file.parent, includes:'*.java')
+          if(file.name.endsWith(Files.Ext.JJTREE)) {
+            fileset(dir:file.parent, includes:Files.ALL_JAVACC)
+            fileset(dir:file.parent, includes:Files.ALL_JAVA)
+          } else if(file.name.endsWith(Files.Ext.JAVACC)) {
+            fileset(dir:file.parent, includes:Files.ALL_JAVA)
           }
         }
       }

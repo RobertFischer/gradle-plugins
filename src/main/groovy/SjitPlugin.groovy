@@ -6,7 +6,7 @@ import org.gradle.api.logging.*
 
 abstract class SjitPlugin implements Plugin<Project> {
 
-  def logger = Logging.getLogger(this.class) 
+  final logger = Logging.getLogger(this.class) 
   def getLog() { logger }
 
   def propertyDefaults(Map props, Project project) {
@@ -14,7 +14,10 @@ abstract class SjitPlugin implements Plugin<Project> {
   }
 
   def propertyDefault(Project project, String propName, defaultValue) {
-    if(!project.hasProperty(propName)) project."$propName" = defaultValue
+    if(!project.hasProperty(propName)) {
+			project."$propName" = defaultValue
+		}
+		return defaultValue
   }
 
 }

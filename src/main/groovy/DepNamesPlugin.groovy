@@ -8,11 +8,14 @@ import org.gradle.api.artifacts.dsl.DependencyHandler
 * Adds dependency keywords to the project based on <code>~/.gradle/dependencies.properties</code>.
 */
 class DepNamesPlugin extends SjitPlugin {
-	def propFile = new File(
+
+	private static final String DEP_PROPS = "dependencies.properties"
+
+	private final File propFile = new File(
 		new File(
 			System.getProperty("user.home", "~"), 
 			".gradle"
-		), "dependencies.properties"
+		), DEP_PROPS
 	).absoluteFile
 
   void apply(Project project) {
@@ -25,7 +28,7 @@ class DepNamesPlugin extends SjitPlugin {
 		}
 
 		def projectPropFile = new File(project.rootDir, 
-			"dependencies.properties"
+			DEP_PROPS
 		).absoluteFile
 		if(projectPropFile.exists()) {
 			projectPropFile.withReader { reader ->

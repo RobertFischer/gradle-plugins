@@ -30,7 +30,7 @@ class ExecPlugin extends SjitPlugin {
       logger.info("Done executing `$cmd`")
 
       if(result) {
-        throw new Exception("$cmd in $baseDir failed with non-zero result code $result")
+        throw new RuntimeException("$cmd in $baseDir failed with non-zero result code $result")
       } else {
         logger.debug("Successful result from `$cmd`")
       }

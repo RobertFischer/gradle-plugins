@@ -6,7 +6,7 @@ import org.gradle.api.artifacts.*
 
 class OneJarPlugin extends SjitPlugin {
 	
-	static final String jarName = "one-jar-ant-task-0.97.jar";
+	private final String jarName = "one-jar-ant-task-0.97.jar";
 
   void apply(Project project) {
 		project.apply(plugin:'java')
@@ -47,7 +47,14 @@ class OneJarPlugin extends SjitPlugin {
 			inputs.files jar.outputs.files
 			outputs.files jarFile
 			doFirst {
-				def runConf = project.configurations.runtime
+				def runConf = project.configurations.runtime.filter { File them ->
+					if(them.name.contains("-oneJar.")) {
+						return !(root.getTasksByName("oneJar", true).any { Task oneJarTask ->
+							oneJar.outputs.getFiles().contains(them)
+						})
+					}
+					return true
+				}
 				def manifestFile = writeOneJarManifestFile(jar) 
 				ant.'one-jar'(destFile:jarFile.absolutePath, manifest:manifestFile.absolutePath) {
 					ant.main(jar:jar.archivePath.absolutePath) {
@@ -95,11 +102,13 @@ class OneJarPlugin extends SjitPlugin {
 
 	File writeOneJarManifestFile(jar) {
 		def manifestFile = File.createTempFile("one-jar-manifest", "mf")
-		manifestFile.withWriter { w -> 
-			def m = jar.manifest.effectiveManifest
-			String main = m.attributes.remove("Main-Class")
-			if(main) m.attributes.put("One-Jar-Main-Class", main)
-			m.writeTo(w)
+		manifestFile.withWriter { writer -> 
+			def manifest = jar.manifest.effectiveManifest
+			String main = manifest.attributes.remove("Main-Class")
+			if(main) {
+				manifest.attributes.put("One-Jar-Main-Class", main)
+			}
+			manifest.writeTo(writer)
 		}
 		manifestFile.deleteOnExit()
 		return manifestFile

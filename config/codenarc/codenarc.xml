@@ -1,0 +1,47 @@
+<ruleset xmlns="http://codenarc.org/ruleset/1.0"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://codenarc.org/ruleset/1.0 http://codenarc.org/ruleset-schema.xsd"
+        xsi:noNamespaceSchemaLocation="http://codenarc.org/ruleset-schema.xsd">
+
+<ruleset-ref path="rulesets/basic.xml" />
+<ruleset-ref path="rulesets/braces.xml" />
+<ruleset-ref path="rulesets/concurrency.xml" />
+<ruleset-ref path="rulesets/design.xml" />
+<ruleset-ref path="rulesets/dry.xml" />
+<ruleset-ref path="rulesets/exceptions.xml">
+	<exclude name="ThrowRuntimeException" />
+</ruleset-ref>
+<ruleset-ref path="rulesets/generic.xml">
+	<rule-config name="StatelessClass">
+		<property name="doNotApplyToClassNames" value="*Convention" />
+	</rule-config>
+</ruleset-ref>
+<ruleset-ref path="rulesets/imports.xml" />
+<ruleset-ref path="rulesets/logging.xml" >
+	<exclude name="LoggerForDifferentClass" />
+</ruleset-ref>
+<ruleset-ref path="rulesets/naming.xml">
+	<rule-config name="FieldName">
+		<property name="regex" value="[a-z][A-Za-z0-9]+" />
+		<property name="finalRegex" value="[a-z][A-Za-z0-9]+" />
+		<property name="staticFinalRegex" value="[A-Z0-9_]+" />
+	</rule-config>
+	<rule-config name="PropertyName">
+		<property name="regex" value="[a-z][A-Za-z0-9]+" />
+		<property name="finalRegex" value="[a-z][A-Za-z0-9]+" />
+		<property name="staticFinalRegex" value="[A-Z0-9_]+" />
+	</rule-config>
+	<rule-config name="VariableName">
+		<property name="regex" value="[a-z][A-Za-z0-9]+" />
+		<property name="finalRegex" value="[a-z][A-Za-z0-9]+" />
+	</rule-config>
+	<exclude name="ClassName" /> <!-- Erroneous failures on inner interfaces -->
+</ruleset-ref>
+<!--<ruleset-ref path="rulesets/size.xml" />-->
+<ruleset-ref path="rulesets/unnecessary.xml">
+	<exclude name="UnnecessaryReturnKeyword" />
+	<exclude name="UnnecessaryConstructor" /> <!-- Erroneous failures on inner classes -->
+</ruleset-ref>
+<ruleset-ref path="rulesets/unused.xml" />
+
+</ruleset>

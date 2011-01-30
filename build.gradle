@@ -1,5 +1,6 @@
 apply plugin:'groovy'
 apply plugin:'maven'
+apply plugin:'code-quality'
 
 configurations {
     deployerJars
@@ -46,11 +47,12 @@ uploadArchives {
       pom {
         groupId='com.smokejumperit'
         artifactId='gradle-plugins'
-        version='0.6.8'
+        version='0.7.0-SNAPSHOT'
       }
     }
   } 
 } 
+//tasks.uploadArchives.dependsOn(tasks.codenarcMain)
 
 task notePlugins << {
   def names = []

@@ -5,14 +5,16 @@ import org.gradle.api.plugins.*
 
 class AllPlugins extends SjitPlugin {
 
-  def plugins
+  final plugins
 
   AllPlugins() {
     def classLoader = this.class.classLoader
 
     logger.trace("Going to find the SJIT plugins list")
     def file = classLoader.getResourceAsStream('com/smokejumperit/gradle/sjit.plugins')
-    if(!file) throw new Exception("Cannot find SmokejumperIT Plugins file")
+    if(!file) {
+			throw new RuntimeException("Cannot find SmokejumperIT Plugins file")
+		}
     plugins = file.text.split()
     file.close()
   }
@@ -25,7 +27,9 @@ class AllPlugins extends SjitPlugin {
     plugins.each {
       def name = "com.smokejumperit.gradle.$it"
       def cls = Class.forName(name, true, classLoader)
-      if(!cls) throw new Exception("Could not find class $cls")
+      if(!cls) {
+				throw new RuntimeException("Could not find class $cls")
+			}
 
       logger.info("${this.class} implies using plugin $name for $project")
       project.apply(plugin:cls)
