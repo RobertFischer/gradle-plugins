@@ -32,6 +32,16 @@ class OneJarPlugin extends SjitPlugin {
 			}
 		}
 
+		project.taskGraph.whenReady { graph ->
+			def jarTask = project.tasks.jar
+			def oneJarTask = project.tasks.oneJar
+			if(graph.hasTask(oneJarTask)) {
+				if(!jarTask.manifest.attributes.contains('Main-Class')) {
+					throw new InvalidUserDataException(oneJarTask.path + " requires the manifest's Main-Class attribute to be set on " + jarTask.path)
+				}
+			}
+		}
+
 		project.task('typedefOneJar', dependsOn:root.tasks.unpackOneJar) {
 			description = "Defines the one-jar task on ant"
 			doFirst {
