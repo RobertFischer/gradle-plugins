@@ -33,9 +33,9 @@ class OneJarPlugin extends SjitPlugin {
 		}
 
 		project.taskGraph.whenReady { graph ->
-			def jarTask = project.tasks.jar
 			def oneJarTask = project.tasks.oneJar
-			if(graph.hasTask(oneJarTask)) {
+			if(oneJarTask && graph.hasTask(oneJarTask)) {
+				def jarTask = project.tasks.jar
 				if(!jarTask.manifest.attributes.contains('Main-Class')) {
 					throw new InvalidUserDataException(oneJarTask.path + " requires the manifest's Main-Class attribute to be set on " + jarTask.path)
 				}
