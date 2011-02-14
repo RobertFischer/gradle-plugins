@@ -6,7 +6,7 @@ import org.gradle.api.artifacts.*
 
 class OneJarPlugin extends SjitPlugin {
 	
-	private final String jarName = "one-jar-ant-task-0.97.jar";
+	private final String jarName = "one-jar-ant-task-0.98.jar";
 
   void apply(Project project) {
 		project.apply(plugin:'java')
