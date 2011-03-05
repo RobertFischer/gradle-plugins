@@ -53,6 +53,20 @@ Provides the `oneJar` task to generate a single executable jar containing depend
 Uses [one-jar](http://one-jar.sourceforge.net) under the hood.
 The resulting jar file will be next to the standard jar, but with '-fat' attached to the name.
 
+
+### Specifying a Main Class
+
+To use the OneJar plugin, you have to specify a main class in your MANIFEST file.  To do this, 
+provide something like the following in your `build.gradle` file:
+
+    jar {
+      mainfest {
+        attributes 'Main-Class': 'com.bigmoney.hugeproject.Main'
+      }
+    }
+
+
+
 ## Javacc Plugin
 
 ### Description
