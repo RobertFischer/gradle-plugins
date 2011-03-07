@@ -45,8 +45,8 @@ class OneJarPlugin extends SjitPlugin {
 		project.task('typedefOneJar', dependsOn:root.tasks.unpackOneJar) {
 			description = "Defines the one-jar task on ant"
 			doFirst {
-				ant.property(name:"one-jar.dist.dir", value:oneJarDir.absolutePath)
-				ant.import(file:new File(oneJarDir, "one-jar-ant-task.xml").absolutePath, optional:false)
+				project.ant.property(name:"one-jar.dist.dir", value:oneJarDir.absolutePath)
+				project.ant.import(file:new File(oneJarDir, "one-jar-ant-task.xml").absolutePath, optional:false)
 			}
 		}
 
