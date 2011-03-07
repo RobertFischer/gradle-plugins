@@ -3,6 +3,7 @@ package com.smokejumperit.gradle
 import org.gradle.api.*
 import org.gradle.api.plugins.*
 import org.gradle.api.artifacts.*
+import org.gradle.api.tasks.*
 
 class OneJarPlugin extends SjitPlugin {
 	
@@ -32,11 +33,21 @@ class OneJarPlugin extends SjitPlugin {
 			}
 		}
 
-		project.taskGraph.whenReady { graph ->
+		if(!root.getTasksByName('cleanOneJar', false)) {
+			root.task('cleanOneJar', type:Delete) {
+				delete oneJarDir
+			}
+
+			def clean = root.getTasksByName('clean', false) ?:
+									project.getTasksByName('clean', false)
+			clean*.dependsOn(root.tasks.cleanOneJar)
+		}
+
+		root.gradle.taskGraph.whenReady { graph ->
 			def oneJarTask = project.tasks.oneJar
 			if(oneJarTask && graph.hasTask(oneJarTask)) {
 				def jarTask = project.tasks.jar
-				if(!jarTask.manifest.attributes.contains('Main-Class')) {
+				if(!jarTask.manifest.attributes.containsKey('Main-Class')) {
 					throw new InvalidUserDataException(oneJarTask.path + " requires the manifest's Main-Class attribute to be set on " + jarTask.path)
 				}
 			}
@@ -52,13 +63,13 @@ class OneJarPlugin extends SjitPlugin {
 
 		project.task('oneJar', dependsOn:[project.tasks.jar, project.tasks.typedefOneJar]) {
 			def jar = project.tasks.jar
-			File jarFile = new File(jar.destinationDir, jar.archiveName - jar.extension - "." + "-oneJar." + jar.extension)
+			File jarFile = new File(jar.destinationDir, jar.archiveName - ("." + jar.extension) + "-standalone." + jar.extension)
 			description = "Makes the fat jar file"
 			inputs.files jar.outputs.files
 			outputs.files jarFile
 			doFirst {
 				def runConf = project.configurations.runtime.filter { File them ->
-					if(them.name.contains("-oneJar.")) {
+					if(them.name.contains("-standalone.")) {
 						return !(root.getTasksByName("oneJar", true).any { Task oneJarTask ->
 							oneJar.outputs.getFiles().contains(them)
 						})
@@ -118,6 +129,8 @@ class OneJarPlugin extends SjitPlugin {
 			if(main) {
 				manifest.attributes.put("One-Jar-Main-Class", main)
 			}
+			manifest.attributes.put("One-Jar-Show-Expand", false)
+			manifest.attributes.put("One-Jar-Confirm-Expand", false)
 			manifest.writeTo(writer)
 		}
 		manifestFile.deleteOnExit()
