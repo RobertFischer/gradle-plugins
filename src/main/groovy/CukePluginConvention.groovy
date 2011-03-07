@@ -5,5 +5,6 @@ import org.gradle.api.plugins.*
 
 class CukePluginConvention {
   String featuresDir
+  String stepsOutputDir
   List configs
 }
