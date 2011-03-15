@@ -110,7 +110,8 @@ class CukePlugin extends SjitPlugin {
       }
 
     }
-    project.runFeatures.dependsOn project.classes, project.testClasses, project.cukeGems, project.cukeTaskdef, project.setJRubyConfig
+		def ptasks = project.tasks
+    ptasks.runFeatures.dependsOn ptasks.classes, ptasks.testClasses, ptasks.cukeGems, ptasks.cukeTaskdef, ptasks.setJRubyConfig
 
   }
 }
