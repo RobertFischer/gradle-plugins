@@ -13,7 +13,7 @@ class CukePlugin extends SjitPlugin {
 	private static final String CUKE = "cuke"
 
   void apply(Project project) {
-    def cuke4DukeVersion = "0.4.2"
+    def cuke4DukeVersion = "0.4.3"
 
     def pluginLogger = this.logger
 
@@ -23,6 +23,7 @@ class CukePlugin extends SjitPlugin {
 
     project.convention.plugins.cuke = new CukePluginConvention()
     project.convention.plugins.cuke.featuresDir = "${project.projectDir}/src/test/features"
+    project.convention.plugins.cuke.stepsOutputDir = "${project.buildDir}/classes/test"
     project.convention.plugins.cuke.configs = [CUKE]
 
     project.configurations { 
@@ -91,15 +92,16 @@ class CukePlugin extends SjitPlugin {
       description = "Runs the Cucumber features"
 
       def featuresDir = project.tryRelativePath(project.convention.plugins.cuke.featuresDir)
+      def stepsOutputDir = project.tryRelativePath(project.convention.plugins.cuke.stepsOutputDir)
       pluginLogger.debug("Features directory: $featuresDir")
 
       def configs = cukeConfigs()
-      pluginLogger.debug("Configurations: $configs")
+      pluginLogger.debug("Configurations: ${configs.toString()}")
 
       def outputDir = project.tryRelativePath(new File(project.buildDir, "cuke-output"))
       project.ant.mkdir(dir:outputDir)
       // --require target/test-classes -- Do we really need that?
-      project.ant.cuke(args:"--verbose --color --format pretty --format junit --out $outputDir $featuresDir") {
+      project.ant.cuke(args:"--verbose --color --format pretty --format junit --out $outputDir --require $stepsOutputDir $featuresDir") {
         project.ant.classpath {
 					project.ant.pathelement(path:project.configurations.cuke.asPath)
 					project.sourceSets.each { ss ->
