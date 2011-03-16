@@ -44,7 +44,7 @@ jar {
 	exclude "**/.gitignore"
 }
 
-/*uploadArchives { 
+uploadArchives { 
   repositories.mavenDeployer {
     def repoUser = System.properties['sjit.repo.user']
     configuration = configurations.deployerJars
@@ -61,7 +61,7 @@ jar {
       }
     }
   } 
-} */
+} 
 //tasks.uploadArchives.dependsOn(tasks.codenarcMain)
 
 task notePlugins << {
