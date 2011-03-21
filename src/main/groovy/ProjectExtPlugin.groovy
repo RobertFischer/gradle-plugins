@@ -15,7 +15,9 @@ class ProjectExtPlugin extends SjitPlugin {
         logger.trace("Could not relativize $path", e)
       } catch(NullPointerException e) {
         logger.trace("Attempted to relativize $path, but got NPE: returning $path")
-      }
+      } catch(Exception e) {
+				logger.debug("Could not relativize $path, got surprising exception", e)
+			}
       return path
     }
   }

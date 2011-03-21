@@ -49,7 +49,6 @@ class RunJRubyPlugin extends SjitPlugin {
       }
       
       def gemDir = null
-      String dirPrefix = "$gem-"
       dir.eachFileRecurse { 
         if(it.name =~ ('^' + gem + '-(?:\\.?\\d+)*$')) {
           if(!gemDir || it.name > gemDir.name) {
@@ -57,8 +56,12 @@ class RunJRubyPlugin extends SjitPlugin {
           }
         }
       }
-
-     return project.tryRelativePath(gemDir) 
+			
+			if(gemDir) {
+				return project.tryRelativePath(gemDir) 
+			} else {
+				return null
+			}
     }
     project.metaClass.gemScript = { String gem ->
       def dir = project.gemHome(gem)
