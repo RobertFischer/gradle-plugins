@@ -78,7 +78,7 @@ class RunJRubyPlugin extends SjitPlugin {
     }
 
     project.metaClass.runJRuby = { String cmdArg, String[] configs=defaultConfigs ->
-      def cmdArray = splitCmd(cmdArg)
+      def cmdArray = splitCmd("-I${project.gemHome} $cmdArg")
       pluginLogger.debug("JRuby Commands: ${cmdArray as List}")
 
       def JRuby = classFor('org.jruby.Main', configs)
@@ -95,7 +95,7 @@ class RunJRubyPlugin extends SjitPlugin {
     project.metaClass.useGem = { String gem ->
       if(!project.gemHome(gem)) {
         pluginLogger.info("Installing JRuby gem: $gem")
-        project.runJRuby("-S gem install --no-rdoc --no-ri $gem")
+        project.runJRuby("-S gem install --no-rdoc --no-ri --install-dir '${project.gemHome}' $gem")
         pluginLogger.debug("Done installing JRuby gem: $gem")
         if(!project.gemHome(gem)) throw new Exception("Could not install $gem")
       } 
@@ -109,7 +109,7 @@ class RunJRubyPlugin extends SjitPlugin {
     if(project.env.GEM_HOME) {
       gemHome = new File(project.env.GEM_HOME ?: "${gemHome}")
       logger.debug("Found environment variable GEM_HOME=${project.env.GEM_HOME}: gem home is now $gemHome")
-    } 
+    }
     def homeGemRc = new File(System.properties['user.home'], '.gemrc')
     if(homeGemRc.exists()) {
       logger.debug("Found gem.rc at $homeGemRc")
