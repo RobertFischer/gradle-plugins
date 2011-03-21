@@ -92,13 +92,13 @@ class RunJRubyPlugin extends SjitPlugin {
 
 			pluginLogger.debug("Loading JRuby config class")
       def JRubyConfig = JRuby_classLoader.loadClass("org.jruby.RubyInstanceConfig")
-			def rCfg = JRubyConfig.new
+			def rCfg = JRubyConfig.newInstance()
 			rCfg.setHardExit(false)
 
       pluginLogger.info("Running JRuby: $cmdArg")
       def curThread = Thread.currentThread()
       curThread.setContextClassLoader(JRuby_classLoader)
-      JRuby.new(rCfg).run(cmdArray)
+      JRuby.getConstructor(JRubyConfig).newInstance(rCfg).run(cmdArray)
       curThread.setContextClassLoader(ClassLoader.systemClassLoader) // Allow JRuby to be GC'ed
       pluginLogger.debug("Done running JRuby: $cmdArg")
 

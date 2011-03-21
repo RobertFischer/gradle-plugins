@@ -76,6 +76,11 @@ class OneJarPlugin extends SjitPlugin {
 					}
 					return true
 				}
+
+				System.setProperty("one-jar.verbose", "${false}")
+				System.setProperty("one-jar.info", "${false}")
+				System.setProperty("one-jar.statistics", "${false}")
+				System.setProperty("one-jar.show.properties", "${false}")
 				def manifestFile = writeOneJarManifestFile(jar) 
 				ant.'one-jar'(destFile:jarFile.absolutePath, manifest:manifestFile.absolutePath) {
 					ant.main(jar:jar.archivePath.absolutePath) {
