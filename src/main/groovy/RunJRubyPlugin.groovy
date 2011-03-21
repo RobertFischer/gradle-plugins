@@ -34,7 +34,7 @@ class RunJRubyPlugin extends SjitPlugin {
 
 
     def foundGemHome = {-> // Lazy thunk
-      def gemHome = null
+      File gemHome = null
       return {->
         if(!gemHome) gemHome = findGemHome(project)
         return gemHome
@@ -42,7 +42,7 @@ class RunJRubyPlugin extends SjitPlugin {
     }.call()
     project.metaClass.getGemHome = foundGemHome 
     project.metaClass.gemHome = { String gem -> 
-      def dir = new File(project.gemHome)
+      def dir = project.gemHome
       if(!dir.exists()) {
         pluginLogger.debug("$dir does not exist: cannot find gem $gem")
         return null
@@ -58,13 +58,18 @@ class RunJRubyPlugin extends SjitPlugin {
       }
 			
 			if(gemDir) {
-				return project.tryRelativePath(gemDir) 
+				def relPath = project.tryRelativePath(gemDir)
+				if(relPath instanceof File) {
+					return relPath
+				} else {
+					return new File(relPath.toString())
+				}
 			} else {
 				return null
 			}
     }
     project.metaClass.gemScript = { String gem ->
-      def dir = new File(project.gemHome(gem))
+      def dir = project.gemHome(gem)
       if(!dir.exists()) {
         pluginLogger.debug("$dir does not exist: cannot find home dir for $gem")
       }
