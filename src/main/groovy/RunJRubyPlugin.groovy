@@ -90,17 +90,29 @@ class RunJRubyPlugin extends SjitPlugin {
       def JRuby = classFor('org.jruby.Main', configs)
 			def JRuby_classLoader = JRuby.getClassLoader()
 
-			pluginLogger.debug("Loading JRuby config class")
-      def JRubyConfig = JRuby_classLoader.loadClass("org.jruby.RubyInstanceConfig")
-			def rCfg = JRubyConfig.newInstance()
-			rCfg.setHardExit(false)
-
-      pluginLogger.info("Running JRuby: $cmdArg")
+			pluginLogger.debug("Updating the context class loader")
       def curThread = Thread.currentThread()
-      curThread.setContextClassLoader(JRuby_classLoader)
-      JRuby.getConstructor(JRubyConfig).newInstance(rCfg).run(cmdArray)
-      curThread.setContextClassLoader(ClassLoader.systemClassLoader) // Allow JRuby to be GC'ed
-      pluginLogger.debug("Done running JRuby: $cmdArg")
+			def oldLoader = curThread.contextClassLoader
+			try {
+				curThread.contextClassLoader = JRuby_classLoader
+
+/*
+				pluginLogger.debug("Loading JRuby config class")
+				def JRubyConfig = JRuby_classLoader.loadClass("org.jruby.RubyInstanceConfig")
+				def rCfg = JRubyConfig.newInstance()
+				rCfg.input = new FileInputStream(FileDescriptor.in)
+				rCfg.output = new PrintStream(new FileOutputStream(FileDescriptor.out), true)
+				rCfg.error = new PrintStream(new FileOutputStream(FileDescriptor.err), true)
+*/
+
+				pluginLogger.info("Running JRuby: $cmdArg")
+				JRuby.newInstance(/*rCfg*/).run(cmdArray)
+			} catch(Exception e) {
+				pluginLogger.error("Error running JRuby: $cmdArg", e)
+			} finally {
+				pluginLogger.debug("Done running JRuby: $cmdArg")
+				curThread.contextClassLoader = oldLoader
+			}
 
     }
 

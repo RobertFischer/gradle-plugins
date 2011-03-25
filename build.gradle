@@ -2,17 +2,19 @@ apply plugin:'groovy'
 apply plugin:'maven'
 apply plugin:'code-quality'
 
+version = '0.7.2-SNAPSHOT'
+
 configurations {
     deployerJars
 }
 
 
 configure(install.repositories.mavenInstaller) {
-    pom.project {
-	groupId 'com.smokejumperit'
-	artifactId 'gradle-plugins'
-	version '0.7.0-SNAPSHOT'
-    }
+	pom.project {
+		groupId 'com.smokejumperit'
+		artifactId 'gradle-plugins'
+		version project.version
+	}
 }
 
 
@@ -57,7 +59,7 @@ uploadArchives {
       pom {
         groupId='com.smokejumperit'
         artifactId='gradle-plugins'
-        version='0.7.1-SNAPSHOT'
+        version= project.version
       }
     }
   } 
