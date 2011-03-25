@@ -7,4 +7,5 @@ class CukePluginConvention {
   String featuresDir
   String stepsOutputDir
   List configs
+	List gems
 }

@@ -41,49 +41,47 @@ class RunJRubyPlugin extends SjitPlugin {
       }
     }.call()
     project.metaClass.getGemHome = foundGemHome 
+
     project.metaClass.gemHome = { String gem -> 
-      def dir = project.gemHome
+      File dir = project.gemHome
       if(!dir.exists()) {
-        pluginLogger.debug("$dir does not exist: cannot find gem $gem")
+        pluginLogger.debug("$dir does not exist: cannot find project's gem home!")
         return null
       }
       
-      def gemDir = null
-      dir.eachFileRecurse { 
-        if(it.name =~ ('^' + gem + '-(?:\\.?\\d+)*$')) {
+      File gemDir = null
+      dir.eachDirRecurse { 
+        if(it.name =~ ('^' + gem + '-\\d+(\\.\\d+)*(-.*)*$')) {
           if(!gemDir || it.name > gemDir.name) {
             gemDir = it
           }
         }
       }
 			
-			if(gemDir) {
-				def relPath = project.tryRelativePath(gemDir)
-				if(relPath instanceof File) {
-					return relPath
-				} else {
-					return new File(relPath.toString())
-				}
-			} else {
-				return null
-			}
+			return gemDir?.absoluteFile
     }
-    project.metaClass.gemScript = { String gem ->
-      def dir = project.gemHome(gem)
-      if(!dir.exists()) {
-        pluginLogger.debug("$dir does not exist: cannot find home dir for $gem")
-      }
-  
-      dir = new File(dir, "bin")
-      if(!dir.exists()) {
-        pluginLogger.debug("$dir does not exist: cannot find bin dir for $gem")
+
+    project.metaClass.gemScript = { String gem -> return project.gemScript(gem, gem) }
+		project.metaClass.gemScript = { String gem, String script ->
+			File gemBase = project.gemHome(gem)
+      if(!gemBase?.exists()) {
+        throw new Exception("$gemBase does not exist: cannot find home dir for $gem (looking for script $script)")
+				return null
       }
 
-      return project.tryRelativePath(new File(dir, gem))
+			File scriptFile = null
+			gemBase.eachDirRecurse { checkDir ->
+				File checkGem = new File(checkDir, script)
+				if(checkGem.exists() && !checkGem.isDirectory()) {
+					scriptFile = checkGem.absoluteFile
+				}
+			}
+
+			return scriptFile
     }
 
     project.metaClass.runJRuby = { String cmdArg, String[] configs=defaultConfigs ->
-      def cmdArray = splitCmd("-I${project.gemHome} $cmdArg")
+      def cmdArray = splitCmd("-I${project.gemHome} -I${project.gemHome}/gems $cmdArg")
       pluginLogger.debug("JRuby Commands: ${cmdArray as List}")
 
 			pluginLogger.debug("Loading JRuby main class")
