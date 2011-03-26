@@ -12,8 +12,8 @@ class CukePlugin extends SjitPlugin {
     project.apply(plugin:ProjectExtPlugin)
 
     project.convention.plugins.cuke = new CukePluginConvention()
-    project.convention.plugins.cuke.featuresDir = "${project.projectDir}/src/test/features"
-    project.convention.plugins.cuke.stepsOutputDir = "${project.buildDir}/classes/test"
+    project.convention.plugins.cuke.featuresDir = "${project.projectDir.absolutePath}/src/test/features"
+    project.convention.plugins.cuke.stepsOutputDir = "${project.buildDir.absolutePath}/classes/test"
     project.convention.plugins.cuke.configs = ["cuke"]
     project.convention.plugins.cuke.gems = ["term-ansicolor", "json", "gherkin", "rspec", "cucumber"]
 
@@ -40,14 +40,14 @@ class CukePlugin extends SjitPlugin {
       description = "Runs the Cucumber features"
 
 			doFirst {
-				def featuresDir = project.tryRelativePath(project.convention.plugins.cuke.featuresDir)
-				def stepsOutputDir = project.tryRelativePath(project.convention.plugins.cuke.stepsOutputDir)
+				def featuresDir = project.convention.plugins.cuke.featuresDir
+				def stepsOutputDir = project.convention.plugins.cuke.stepsOutputDir
 				pluginLogger.debug("Features directory: $featuresDir")
 
 				def configs = cukeConfigs()
 				pluginLogger.debug("Configurations: ${configs.toString()}")
 
-				def outputDir = project.tryRelativePath(new File(project.buildDir, "cuke-output"))
+				def outputDir = new File(project.buildDir, "cuke-output")
 				project.ant.mkdir(dir:outputDir)
 				// --require target/test-classes -- Do we really need that?
 				project.runJRuby(
@@ -64,7 +64,7 @@ class CukePlugin extends SjitPlugin {
 					}.flatten().collect { "-I${it}" }.join(" ")) +
 					" '${project.gemScript('cucumber')}' " +
 					" --verbose --color --format pretty " +
-					" --out '$outputDir' --require '$stepsOutputDir' '$featuresDir'", 
+					" --require '$stepsOutputDir' '$featuresDir'", 
 					configs
 				)
 			}
