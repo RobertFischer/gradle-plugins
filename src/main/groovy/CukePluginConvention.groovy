@@ -4,8 +4,9 @@ import org.gradle.api.*
 import org.gradle.api.plugins.*
 
 class CukePluginConvention {
+	boolean warn = false
   String featuresDir
-  String stepsOutputDir
+  //String stepsOutputDir
   List configs
 	List gems
 }

@@ -34,7 +34,7 @@ class ClassLoadersPlugin extends SjitPlugin {
     project.metaClass.classLoaderFor = { String[] configs ->
       return new URLClassLoader(configs.collect { 
         configUrls[it]
-      }.flatten() as URL[]) 
+      }.flatten() as URL[], project.class.classLoader) 
     }
 
     project.metaClass.classFor = { String className, String[] configNames ->

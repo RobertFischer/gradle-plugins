@@ -13,7 +13,7 @@ class CukePlugin extends SjitPlugin {
 
     project.convention.plugins.cuke = new CukePluginConvention()
     project.convention.plugins.cuke.featuresDir = "${project.projectDir.absolutePath}/src/test/features"
-    project.convention.plugins.cuke.stepsOutputDir = "${project.buildDir.absolutePath}/classes/test"
+    //project.convention.plugins.cuke.stepsOutputDir = "${project.buildDir.absolutePath}/classes/test"
     project.convention.plugins.cuke.configs = ["cuke"]
     project.convention.plugins.cuke.gems = ["term-ansicolor", "json", "gherkin", "rspec", "cucumber"]
 
@@ -41,7 +41,6 @@ class CukePlugin extends SjitPlugin {
 
 			doFirst {
 				def featuresDir = project.convention.plugins.cuke.featuresDir
-				def stepsOutputDir = project.convention.plugins.cuke.stepsOutputDir
 				pluginLogger.debug("Features directory: $featuresDir")
 
 				def configs = cukeConfigs()
@@ -62,9 +61,10 @@ class CukePlugin extends SjitPlugin {
 						}
 						toInclude
 					}.flatten().collect { "-I${it}" }.join(" ")) +
+					" ${project.convention.plugins.cuke.warn ? '-w' : ''} " +
 					" '${project.gemScript('cucumber')}' " +
 					" --verbose --color --format pretty " +
-					" --require '$stepsOutputDir' '$featuresDir'", 
+					" '$featuresDir'", 
 					configs
 				)
 			}

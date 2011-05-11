@@ -2,7 +2,7 @@ apply plugin:'groovy'
 apply plugin:'maven'
 apply plugin:'code-quality'
 
-version = '0.7.2'
+version = '0.8.0'
 
 configurations {
     deployerJars
@@ -26,7 +26,7 @@ repositories {
   mavenRepo urls:'http://repo.smokejumperit.com'
 }
 dependencies {
-  groovy 'org.codehaus.groovy:groovy:1.8.0-beta-2'
+  groovy 'org.codehaus.groovy:groovy:1.8.0'
   deployerJars "org.apache.maven.wagon:wagon-ssh:1.0-beta-6" 
   compile fileTree(
     dir:System.getenv().get('GRADLE_HOME'),

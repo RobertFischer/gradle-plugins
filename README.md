@@ -4,6 +4,11 @@ These are a variety of plugins that I wrote for [Gradle](http://gradle.org) and 
 
 All of the plugins below have the class name `com.smokejumperit.gradle.NameOfPlugin`.  So `AllPlugins` is `com.smokejumperit.gradle.AllPlugins`, and `EnvPlugin` is `com.smokejumperit.gradle.EnvPlugin`.  And so on.
 
+## Compilers
+
+Compilers have been broken out into their own projects. See [Gradle-Mirah-Compiler](http://github.com/RobertFischer/Gradle-Mirah-Compiler)
+and [Gradle-Javacc-Compiler](http://github.com/RobertFischer/Gradle-Javacc-Compiler).
+
 ## AllPlugins
 
 ### Description
@@ -66,27 +71,6 @@ provide something like the following in your `build.gradle` file:
     }
 
 
-
-## Javacc Plugin
-
-### Description
-
-Provides tasks to compile JavaCC/JJTree files.  Apply the plugin and use `-t` to get details on the tasks if you want to call them
-directly: otherwise, the parser will be generated and the files compiled as a prelude to `compileJava`, and the resulting parser
-will be placed into the archive of the `jar` task.
-
-The `JAVACC_HOME` environment variable (that's *environment variable*, not *Java property*) must be set to the home directory of
-the JavaCC installation, as per the `javacchome` parameter of [the Ant `javacc` task](http://ant.apache.org/manual/Tasks/javacc.html).
-
-The source for JavaCC/JJTree (including `*.java` support files) should be put in folder packages under 
-`./src/javacc` --- it's not a source-set, so there's no `java`
-or `javacc` subdirectory.  So if you want to generate your parser in `com.smokejumperit.parser`, the location for the JJTree file
-is `./src/javacc/com/smokejumperit/parser/myparser.jjt`.  If you want to change that location, change the `javaccSrcDir` property
-of your project.
-
-Java files (`*.java`) adjacent to JavaCC or JJTree files (`*.jj` or `*.jjt`) will be deleted on clean.  JavaCC files (`*.jj`) adjacent 
-to JJTree files (`*.jjt`) will be deleted on clean.  Any `*.java` files (or other files) not adjacent to a `*.jj` and `*.jjt` file will
-survive a clean.
 
 ## ClassLoadersPlugin
 
@@ -176,7 +160,7 @@ Add the following lines to your build script to add the jars to your buildscript
         mavenRepo urls:'http://repo.smokejumperit.com'
       }
       dependencies {
-        classpath 'com.smokejumperit:gradle-plugins:0.7.1'
+        classpath 'com.smokejumperit:gradle-plugins:0.8.0'
       }
     }
 
@@ -189,7 +173,7 @@ If you want to ust use all the SmokejumperIT plugins, you can do this:
         mavenRepo urls:'http://repo.smokejumperit.com'
       }
       dependencies {
-        classpath 'com.smokejumperit:gradle-plugins:0.7.1'
+        classpath 'com.smokejumperit:gradle-plugins:0.8.0'
       }
     }
 

@@ -83,7 +83,6 @@ class RunJRubyPlugin extends SjitPlugin {
     project.metaClass.runJRuby = { String cmdArg, String[] configs=defaultConfigs ->
       def cmdArray = splitCmd("-I${project.gemHome} -I${project.gemHome}/gems $cmdArg")
       pluginLogger.debug("JRuby Commands: ${cmdArray as List}")
-
 			pluginLogger.debug("Loading JRuby main class")
       def JRuby = classFor('org.jruby.Main', configs)
 			def JRuby_classLoader = JRuby.getClassLoader()
