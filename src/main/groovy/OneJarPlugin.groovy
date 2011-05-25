@@ -37,10 +37,6 @@ class OneJarPlugin extends SjitPlugin {
 			root.task('cleanOneJar', type:Delete) {
 				delete oneJarDir
 			}
-
-			def clean = root.getTasksByName('clean', false) ?:
-									project.getTasksByName('clean', false)
-			clean*.dependsOn(root.tasks.cleanOneJar)
 		}
 
 		root.gradle.taskGraph.whenReady { graph ->
@@ -65,17 +61,15 @@ class OneJarPlugin extends SjitPlugin {
 			def jar = project.tasks.jar
 			File jarFile = new File(jar.destinationDir, jar.archiveName - ("." + jar.extension) + "-standalone." + jar.extension)
 			description = "Makes the fat jar file"
-			inputs.files jar.outputs.files
+			inputs.files([jar.outputs.files, project.configurations.getByName("compile"), project.configurations.getByName("runtime")])
 			outputs.files jarFile
 			doFirst {
-				def runConf = project.configurations.runtime.filter { File them ->
-					if(them.name.contains("-standalone.")) {
-						return !(root.getTasksByName("oneJar", true).any { Task oneJarTask ->
-							oneJar.outputs.getFiles().contains(them)
-						})
-					}
-					return true
-				}
+				def runConf = [
+					project.configurations.getByName("runtime").resolve(),
+					project.configurations.getByName("compile").resolve()
+				].flatten()
+
+				project.logger.debug("Runtime files to consider for OneJar (${runConf.size()}):\n\t${runConf.join("\n\t")}")
 
 				System.setProperty("one-jar.verbose", "${false}")
 				System.setProperty("one-jar.info", "${false}")
@@ -85,14 +79,17 @@ class OneJarPlugin extends SjitPlugin {
 				ant.'one-jar'(destFile:jarFile.absolutePath, manifest:manifestFile.absolutePath) {
 					ant.main(jar:jar.archivePath.absolutePath) {
 						runConf.findAll { it.isDirectory() }.each { depDir ->
+							project.logger.debug("Adding ${depDir.absolutePath} to OneJar main")
 							ant.fileset(dir:depDir.absolutePath)
 						}
 					}
 					project.sourceSets*.resources*.getSrcDirs()?.flatten()?.findAll { it?.exists() }?.each { resdir ->
+						project.logger.debug("Adding ${resdir.absolutePath} to OneJar top-level (for resources)")
 						ant.fileset(dir:resdir.absolutePath)
 					}
 					ant.lib {
 						runConf.findAll { !it.isDirectory() }.each { depFile ->
+							project.logger.debug("Adding ${depFile.absolutePath} to OneJar lib")
 							ant.fileset(file:depFile.absolutePath)
 						}
 					}
