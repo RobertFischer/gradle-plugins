@@ -48,13 +48,13 @@ jar {
 
 uploadArchives { 
   repositories.mavenDeployer {
-    def repoUser = System.properties['sjit.repo.user']
+    def repoUser = System.properties['sjit.repo.user'] ?: "[NO USER: SET sjit.repo.user]"
     configuration = configurations.deployerJars
     repository(url: "scp://repo.smokejumperit.com/home/$repoUser/repo.smokejumperit.com/") {
       authentication(
         userName: repoUser,
-        privateKey: new File(System.properties['sjit.repo.keyFile']).absolutePath, 
-        passphrase: System.properties['sjit.repo.passphrase']
+        privateKey: new File(System.properties['sjit.repo.keyFile'] ?: "[NO KEYFILE: set sjit.repo.keyFile]").absolutePath, 
+        passphrase: System.properties['sjit.repo.passphrase'] ?: ""
       )
       pom {
         groupId='com.smokejumperit'
