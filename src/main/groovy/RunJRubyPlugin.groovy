@@ -21,7 +21,7 @@ class RunJRubyPlugin extends SjitPlugin {
       mavenRepo(name:"${this.class.simpleName}SnakeYamlRepo", urls:"http://snakeyamlrepo.appspot.com/repository")
     }
     project.dependencies { 
-      jruby "org.jruby:jruby-complete:1.6.0"
+      jruby "org.jruby:jruby-complete:1.6.2"
       jrubyPluginYaml "org.yaml:snakeyaml:1.6"
     }
     String[] defaultConfigs = ['jruby'] as String[]
