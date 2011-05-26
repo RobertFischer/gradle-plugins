@@ -125,7 +125,7 @@ class RunJRubyPlugin extends SjitPlugin {
   }
 
   File findGemHome(project) {
-    File gemHome = new File(System.properties['user.home'], '.gem')
+    File gemHome = new File(System.properties['user.home'], '.gem/jruby/1.8')
     logger.debug("Looking for Gem Home based on $project: defaulting gem home to $gemHome")
     if(project.env.GEM_HOME) {
       gemHome = new File(project.env.GEM_HOME ?: "${gemHome}")
