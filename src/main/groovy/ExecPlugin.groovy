@@ -10,7 +10,7 @@ class ExecPlugin extends SjitPlugin {
       delegate.exec(cmd, new File(baseDir))
     }
     project.metaClass.exec = { String cmd, File baseDir=new File('.') ->
-			project.execIn(baseDir, cmd)
+			project.execIn(baseDir, cmd.split())
 		}
 		project.metaClass.execIn = { File baseDir, Object... cmd ->
 			project.execIn(baseDir, cmd*.toString() as String[])
