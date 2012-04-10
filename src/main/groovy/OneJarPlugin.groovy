@@ -97,7 +97,7 @@ class OneJarPlugin extends SjitPlugin {
 
 				Date date = new Date()
 				String name = jar.baseName
-				project.configurations.archives.addArtifact(
+				project.artifacts.add('archives',
 					[
 						getClassifier: { -> "standalone" },
 						getDate: {-> date },
