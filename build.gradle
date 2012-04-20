@@ -10,20 +10,19 @@ configurations {
 
 
 configure(install.repositories.mavenInstaller) {
-	pom.project {
-		groupId 'com.smokejumperit'
-		artifactId 'gradle-plugins'
-		version project.version
-	}
+  pom.project {
+    groupId 'com.smokejumperit'
+    artifactId 'gradle-plugins'
+    version project.version
+  }
 }
-
 
 ant.property(environment:'env')
 if(!ant.properties['env.GRADLE_HOME']) throw new Exception('Please set $GRADLE_HOME')
 
 repositories {
   mavenCentral()
-  mavenRepo urls:'http://repo.smokejumperit.com'
+  maven { url 'http://repo.smokejumperit.com' }
 }
 dependencies {
   groovy 'org.codehaus.groovy:groovy:1.8.0'
@@ -35,15 +34,15 @@ dependencies {
 }
 
 processResources {
-	includes = excludes = []
-	include "**/*"
-	exclude "**/.gitignore"
+  includes = excludes = []
+  include "**/*"
+  exclude "**/.gitignore"
 }
 
 jar {
-	includes = excludes = []
-	include "**/*"
-	exclude "**/.gitignore"
+  includes = excludes = []
+  include "**/*"
+  exclude "**/.gitignore"
 }
 
 uploadArchives { 
