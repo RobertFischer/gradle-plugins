@@ -64,12 +64,9 @@ class OneJarPlugin extends SjitPlugin {
 			inputs.files([jar.outputs.files, project.configurations.getByName("compile"), project.configurations.getByName("runtime")])
 			outputs.files jarFile
 			doFirst {
-				def runConf = [
-					project.configurations.getByName("runtime").resolve(),
-					project.configurations.getByName("compile").resolve()
-				].flatten()
-
+				def runConf = project.configurations.getByName("runtime").resolve()
 				project.logger.debug("Runtime files to consider for OneJar (${runConf.size()}):\n\t${runConf.join("\n\t")}")
+				def (runtimeDirs, runtimeLibs) = runConf.split { it.isDirectory() }
 
 				System.setProperty("one-jar.verbose", "${false}")
 				System.setProperty("one-jar.info", "${false}")
@@ -78,7 +75,7 @@ class OneJarPlugin extends SjitPlugin {
 				def manifestFile = writeOneJarManifestFile(jar) 
 				ant.'one-jar'(destFile:jarFile.absolutePath, manifest:manifestFile.absolutePath) {
 					ant.main(jar:jar.archivePath.absolutePath) {
-						runConf.findAll { it.isDirectory() }.each { depDir ->
+						runtimeDirs.each { depDir ->
 							project.logger.debug("Adding ${depDir.absolutePath} to OneJar main")
 							ant.fileset(dir:depDir.absolutePath)
 						}
@@ -88,7 +85,7 @@ class OneJarPlugin extends SjitPlugin {
 						ant.fileset(dir:resdir.absolutePath)
 					}
 					ant.lib {
-						runConf.findAll { !it.isDirectory() }.each { depFile ->
+						runtimeLibs.each { depFile ->
 							project.logger.debug("Adding ${depFile.absolutePath} to OneJar lib")
 							ant.fileset(file:depFile.absolutePath)
 						}
