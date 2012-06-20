@@ -68,10 +68,12 @@ class OneJarPlugin extends SjitPlugin {
 				project.logger.debug("Runtime files to consider for OneJar (${runConf.size()}):\n\t${runConf.join("\n\t")}")
 				def (runtimeDirs, runtimeLibs) = runConf.split { it.isDirectory() }
 
-				System.setProperty("one-jar.verbose", "${false}")
-				System.setProperty("one-jar.info", "${false}")
-				System.setProperty("one-jar.statistics", "${false}")
-				System.setProperty("one-jar.show.properties", "${false}")
+				if (logger.isEnabled(org.gradle.api.logging.LogLevel.DEBUG)) {
+					System.setProperty("one-jar.verbose", "true")
+					System.setProperty("one-jar.info", "true")
+					System.setProperty("one-jar.statistics", "true")
+					System.setProperty("one-jar.show.properties", "true")
+				}
 				def manifestFile = writeOneJarManifestFile(jar) 
 				ant.'one-jar'(destFile:jarFile.absolutePath, manifest:manifestFile.absolutePath) {
 					ant.main(jar:jar.archivePath.absolutePath) {
