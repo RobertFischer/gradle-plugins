@@ -82,10 +82,6 @@ class OneJarPlugin extends SjitPlugin {
 							ant.fileset(dir:depDir.absolutePath)
 						}
 					}
-					project.sourceSets*.resources*.getSrcDirs()?.flatten()?.findAll { it?.exists() }?.each { resdir ->
-						project.logger.debug("Adding ${resdir.absolutePath} to OneJar top-level (for resources)")
-						ant.fileset(dir:resdir.absolutePath)
-					}
 					ant.lib {
 						runtimeLibs.each { depFile ->
 							project.logger.debug("Adding ${depFile.absolutePath} to OneJar lib")
