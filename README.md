@@ -65,7 +65,7 @@ To use the OneJar plugin, you have to specify a main class in your MANIFEST file
 provide something like the following in your `build.gradle` file:
 
     jar {
-      mainfest {
+      manifest {
         attributes 'Main-Class': 'com.bigmoney.hugeproject.Main'
       }
     }
